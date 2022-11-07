@@ -17,15 +17,13 @@ public:
     void setup();
     void print(bool withCoords = false) const;
     void light(std::string square, bool lit = true) {
-        int x = square[0] - 'a';
-        int y = 8 - (square[1] - '0');
-        squares[x][y]->setLit(lit);
+        getSquare(square)->setLit(true);
     }
     bool move(Move move);
     bool isLegal(Move move) const {return true;}
     Square * getSquare(std::string square) const {
         int x = square[0] - 'a';
-        int y = 8 - (square[1] - '0');
+        int y = square[1] - '1';
         return squares[x][y];
     }
     Square * findKing(bool color) const;

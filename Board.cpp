@@ -18,52 +18,53 @@ Board::Board(bool original_) {
 }
 
 void Board::setup() {
-    for (int i = 0; i < 8; i++) {
-        squares[i][1]->setPiece(new Piece('P', 0));
-        squares[i][6]->setPiece(new Piece('P', 1));
+    for (string file : {"a", "b", "c", "d", "e", "f", "g", "h"}) {
+        getSquare(file + "2")->setPiece(new Piece('P', 0));
+        getSquare(file + "7")->setPiece(new Piece('P', 1));
     }
-    squares[0][0]->setPiece(new Piece('R', 0));
-    squares[1][0]->setPiece(new Piece('N', 0));
-    squares[2][0]->setPiece(new Piece('B', 0));
-    squares[3][0]->setPiece(new Piece('Q', 0));
-    squares[4][0]->setPiece(new Piece('K', 0));
-    squares[5][0]->setPiece(new Piece('B', 0));
-    squares[6][0]->setPiece(new Piece('N', 0));
-    squares[7][0]->setPiece(new Piece('R', 0));
-    squares[0][7]->setPiece(new Piece('R', 1));
-    squares[1][7]->setPiece(new Piece('N', 1));
-    squares[2][7]->setPiece(new Piece('B', 1));
-    squares[3][7]->setPiece(new Piece('Q', 1));
-    squares[4][7]->setPiece(new Piece('K', 1));
-    squares[5][7]->setPiece(new Piece('B', 1));
-    squares[6][7]->setPiece(new Piece('N', 1));
-    squares[7][7]->setPiece(new Piece('R', 1));
+    getSquare("a1")->setPiece(new Piece('R', 0));
+    getSquare("b1")->setPiece(new Piece('N', 0));
+    getSquare("c1")->setPiece(new Piece('B', 0));
+    getSquare("d1")->setPiece(new Piece('Q', 0));
+    getSquare("e1")->setPiece(new Piece('K', 0));
+    getSquare("f1")->setPiece(new Piece('B', 0));
+    getSquare("g1")->setPiece(new Piece('N', 0));
+    getSquare("h1")->setPiece(new Piece('R', 0));
+    getSquare("a8")->setPiece(new Piece('R', 1));
+    getSquare("b8")->setPiece(new Piece('N', 1));
+    getSquare("c8")->setPiece(new Piece('B', 1));
+    getSquare("d8")->setPiece(new Piece('Q', 1));
+    getSquare("e8")->setPiece(new Piece('K', 1));
+    getSquare("f8")->setPiece(new Piece('B', 1));
+    getSquare("g8")->setPiece(new Piece('N', 1));
+    getSquare("h8")->setPiece(new Piece('R', 1));
 }
 
 void Board::print(bool withCoords) const {
     if (withCoords) {
         cout << "  a b c d e f g h" << endl;
     }
-    for (int i = 0; i < 8; i++) {
+    for (string rank : {"8", "7", "6", "5", "4", "3", "2", "1"}) {
         if (withCoords) {
-            cout << 8 - i << " ";
+            cout << rank << " ";
         }
-        for (int j = 0; j < 8; j++) {
-            if (squares[j][i]->getPiece() == NULL) {
-                if (squares[j][i]->isLit()) {
+        for (string file : {"a", "b", "c", "d", "e", "f", "g", "h"}) {
+            Square * square = getSquare(file + rank);
+            if (square->getPiece() != NULL) {
+                cout << *square->getPiece();
+            }
+            else {
+                if (square->isLit()) {
                     cout << "#";
                 }
                 else {
                     cout << " ";
                 }
             }
-            else {
-                cout << *squares[j][i]->getPiece();
-            }
             cout << " ";
         }
         if (withCoords) {
-            cout << 8 - i;
+            cout << " " << rank;
         }
         cout << endl;
     }
