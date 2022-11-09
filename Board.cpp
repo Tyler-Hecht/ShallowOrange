@@ -121,13 +121,104 @@ bool Board::move(Move move) {
     return true;
 }
 
-Square * Board::findKing(bool color) const {
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
-            if (squares[i][j]->getPiece() != NULL && squares[i][j]->getPiece()->getSymbol() == 'K' && squares[i][j]->getPiece()->getColor() == color) {
-                return squares[i][j];
+vector<string> Board::knightSquares(string square) const {
+    vector<vector<int>> directions = {{-2, -1}, {-2, 1}, {-1, -2}, {-1, 2}, {1, -2}, {1, 2}, {2, -1}, {2, 1}};
+    vector<string> squares;
+    for (vector<int> direction : directions) {
+        int file = square[0] - 'a' + direction[0];
+        int rank = square[1] - '1' + direction[1];
+        // if on the board
+        if (file >= 0 && file < 8 && rank >= 0 && rank < 8) {
+            squares.push_back(string(1, 'a' + file) + string(1, '1' + rank));
+        }
+    }
+    return squares;
+}
+
+vector<string> Board::rbSquares(string square, bool rook) const {
+    vector<vector<int>> directions;
+    if (rook) {
+        directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+    } else {
+        directions = {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
+    }
+    vector<string> squares;
+    for (vector<int> direction : directions) {
+        int file = square[0] - 'a';
+        int rank = square[1] - '1';
+        while (true) {
+            // move further in a direction
+            file += direction[0];
+            rank += direction[1];
+            // off the board
+            if (file < 0 || file >= 8 || rank < 0 || rank >= 8) {
+                break;
+            }
+            squares.push_back(string(1, 'a' + file) + string(1, '1' + rank));
+            // ran into piece
+            if (getSquare(squares.back())->getPiece() != NULL) {
+                break;
             }
         }
     }
-    return NULL;
+}
+
+string Board::findKing(bool color) const {
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            if (squares[i][j]->getPiece() != NULL && squares[i][j]->getPiece()->getSymbol() == 'K' && squares[i][j]->getPiece()->getColor() == color) {
+                return string(1, i) + string(1, j);
+            }
+        }
+    }
+    return "";
+}
+
+bool Board::inCheck(bool color) const {
+    string kingSquare = findKing(color);
+    //detect check by knight
+    vector<string> knightMoves = knightSquares(kingSquare);
+    for (string square : knightMoves) {
+        Piece * piece = getSquare(square)->getPiece();
+        if (piece != NULL && piece->getSymbol() == 'N' && piece->getColor() != color) {
+            return true;
+        }
+    }
+    vector<string> bishopMoves = rbSquares(kingSquare, false);
+    for (string square : bishopMoves) {
+        Piece * piece = getSquare(square)->getPiece();
+        if (piece != NULL && (piece->getSymbol() == 'B' || piece->getSymbol() == 'Q') && piece->getColor() != color) {
+            return true;
+        }
+    }
+    vector<string> rookMoves = rbSquares(kingSquare, true);
+    for (string square : rookMoves) {
+        Piece * piece = getSquare(square)->getPiece();
+        if (piece != NULL && (piece->getSymbol() == 'R' || piece->getSymbol() == 'Q') && piece->getColor() != color) {
+            return true;
+        }
+    }
+    vector<string> pawnMoves;
+    //work backwards to find possible pawn moves
+    if (!color) {
+        pawnMoves.push_back(to_string(kingSquare[0] - 'a' - 1) + to_string(kingSquare[1] - '1' - 1));
+        pawnMoves.push_back(to_string(kingSquare[0] - 'a' + 1) + to_string(kingSquare[1] - '1' - 1));
+    } else {
+        pawnMoves.push_back(to_string(kingSquare[0] - 'a' - 1) + to_string(kingSquare[1] - '1' + 1));
+        pawnMoves.push_back(to_string(kingSquare[0] - 'a' + 1) + to_string(kingSquare[1] - '1' + 1));
+    }
+    for (string square : pawnMoves) {
+        if (square[0] >= 0 && square[0] < 8 && square[1] >= 0 && square[1] < 8) {
+            Piece * piece = getSquare(square)->getPiece();
+            if (piece != NULL && piece->getSymbol() == 'P' && piece->getColor() != color) {
+                return true;
+            }
+        }
+    }
+    //no check
+    return false;
+}
+
+bool Board::isLegal(Move move) const {
+    return true;
 }
