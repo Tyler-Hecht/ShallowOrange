@@ -42,3 +42,8 @@ string Move::toString() const {
     }
     return move;
 }
+
+ostream &operator<<(ostream &os, const Move &move) {
+    os << move.toString();
+    return os;
+}

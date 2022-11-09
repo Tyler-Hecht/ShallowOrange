@@ -28,7 +28,12 @@ public:
     void light(std::string square, bool lit = true) {
         getSquare(square)->setLit(true);
     }
-    bool makeMove(Move move);
+    /**
+     * @brief Makes a move on the board, updating relevant member variables
+     * 
+     * @param move The move to make
+     */
+    void makeMove(Move move);
     /**
      * @brief Get the Square object at a given square
      * 
@@ -82,4 +87,13 @@ public:
      * @return bool Whether or not the move is legal
      */
     bool isLegal(Move move) const;
+
+    /**
+     * @brief Gets all the possible legal moves for a given square
+     * The piece on the square must be the same color as the turn
+     * 
+     * @param square The square to get the moves for
+     * @return std::vector<Move> All the possible moves for the square
+     */
+    std::vector<Move> getMoves(std::string square) const;
 };

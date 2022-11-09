@@ -86,13 +86,18 @@ void Board::print(bool withCoords) const {
     }
 }
 
-bool Board::makeMove(Move move) {
+void Board::makeMove(Move move) {
+    // the piece that is moving
     Piece * piece = getSquare(move.getFrom())->getPiece();
+    // handles promotion
     if (move.isPromotion()) {
         piece->promote(move.getPromotionType());
     }
+    // removes the piece from its square
     getSquare(move.getFrom())->setPiece(NULL);
+    // moves the piece to its new square
     getSquare(move.getTo())->setPiece(piece);
+    // handles castling
     if (move.isCastle()) {
         Piece * rook;
         if (move.getTo() == "g1") {
@@ -124,11 +129,25 @@ bool Board::makeMove(Move move) {
             canCastleQueensideBlack = false;
         }
     }
+    // handles en passant
     if (move.isEnPassant()) {
         string captureSquare = move.enPassantSquare();
         getSquare(captureSquare)->setPiece(NULL);
     }
-    return true;
+    // determines new en passant square
+    if (move.getPiece() == 'P') {
+        if (move.getFrom()[1] == '2' && move.getTo()[1] == '4') {
+            enPassant = move.getFrom()[0] + "3";
+        }
+        else if (move.getFrom()[1] == '7' && move.getTo()[1] == '5') {
+            enPassant = move.getFrom()[0] + "6";
+        }
+        else {
+            enPassant = "";
+        }
+    } else {
+        enPassant = "";
+    }
 }
 
 vector<string> Board::knightSquares(string square) const {
@@ -269,4 +288,17 @@ bool Board::isLegal(Move move) const {
     }
     delete tmp;
     return true;
+}
+
+vector<Move> Board::getMoves(string square) const {
+    // no piece on square
+    if (getSquare(square)->getPiece() == NULL) {
+        return vector<Move>();
+    }
+    // piece is not the right color
+    if (getSquare(square)->getPiece()->getColor() != turn) {
+        return vector<Move>();
+    }
+    vector<Move> moves;
+    return moves;
 }

@@ -8,9 +8,5 @@ int main() {
     board.setup();
     board.makeMove(Move('P', "e2", "e4"));
     board.print();
-    vector<string> squares = board.knightSquares("e4");
-    for (string square : squares) {
-        cout << square << endl;
-    }
     return 0;
 }
