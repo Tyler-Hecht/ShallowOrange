@@ -2,9 +2,8 @@
 #include <iostream>
 using namespace std;
 
-Board::Board(bool original_) {
+Board::Board() {
     turn = 0;
-    original = original_;
     enPassant = "";
     canCastleKingsideWhite = true;
     canCastleQueensideWhite = true;
@@ -13,6 +12,20 @@ Board::Board(bool original_) {
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
             squares[i][j] = new Square();
+        }
+    }
+}
+
+Board::Board(const Board & board) {
+    turn = board.turn;
+    enPassant = board.enPassant;
+    canCastleKingsideWhite = board.canCastleKingsideWhite;
+    canCastleQueensideWhite = board.canCastleQueensideWhite;
+    canCastleKingsideBlack = board.canCastleKingsideBlack;
+    canCastleQueensideBlack = board.canCastleQueensideBlack;
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            squares[i][j] = new Square(*board.squares[i][j]);
         }
     }
 }
@@ -73,10 +86,7 @@ void Board::print(bool withCoords) const {
     }
 }
 
-bool Board::move(Move move) {
-    if (!isLegal(move)) {
-        return false;
-    }
+bool Board::makeMove(Move move) {
     Piece * piece = getSquare(move.getFrom())->getPiece();
     if (move.isPromotion()) {
         piece->promote(move.getPromotionType());
@@ -161,6 +171,7 @@ vector<string> Board::rbSquares(string square, bool rook) const {
             }
         }
     }
+    return squares;
 }
 
 string Board::findKing(bool color) const {
@@ -174,8 +185,7 @@ string Board::findKing(bool color) const {
     return "";
 }
 
-bool Board::inCheck(bool color) const {
-    string kingSquare = findKing(color);
+bool Board::inCheck(bool color, std::string kingSquare) const {
     //detect check by knight
     vector<string> knightMoves = knightSquares(kingSquare);
     for (string square : knightMoves) {
@@ -220,5 +230,43 @@ bool Board::inCheck(bool color) const {
 }
 
 bool Board::isLegal(Move move) const {
+    // not legal if trying to castle in or through check
+    if (move.isCastle()) {
+        // white
+        if (move.getFrom() == "e1") {
+            // kingside
+            if (move.getTo() == "g1") {
+                if (inCheck(true, "e1") || inCheck(true, "f1") || inCheck(true, "g1")) {
+                    return false;
+                }
+            // queenside
+            } else if (move.getTo() == "c1") {
+                if (inCheck(true, "e1") || inCheck(true, "d1") || inCheck(true, "c1")) {
+                    return false;
+                }
+            }
+        // black
+        } else if (move.getFrom() == "e8") {
+            // kingside
+            if (move.getTo() == "g8") {
+                if (inCheck(false, "e8") || inCheck(false, "f8") || inCheck(false, "g8")) {
+                    return false;
+                }
+            // queenside
+            } else if (move.getTo() == "c8") {
+                if (inCheck(false, "e8") || inCheck(false, "d8") || inCheck(false, "c8")) {
+                    return false;
+                }
+            }
+        }
+    }
+    // not legal if trying to move into check
+    Board * tmp = new Board(*this);
+    tmp->makeMove(move);
+    if (tmp->inCheck(turn, tmp->findKing(turn))) {
+        delete tmp;
+        return false;
+    }
+    delete tmp;
     return true;
 }

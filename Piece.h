@@ -2,6 +2,9 @@
 #include <string>
 #include <iostream>
 
+/**
+ * @brief A class representing a chess piece
+ */
 class Piece {
     int type; // 0 = pawn, 1 = knight, 2 = bishop, 3 = rook, 4 = queen, 5 = king
     bool color; //0 for white, 1 for black
@@ -54,5 +57,14 @@ public:
     }
 };
 
+/**
+ * @brief Overloads the << operator for Piece
+ * Spits out the symbol of the piece, with pawns being P or p
+ * Uppercase for white, lowercase for black
+ * 
+ * @param os The ostream to output to
+ * @param piece The piece to output
+ * @return std::ostream& The ostream
+ */
 std::ostream& operator<<(std::ostream& os, const Piece& piece);
 

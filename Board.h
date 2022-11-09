@@ -4,23 +4,31 @@
 #include "Square.h"
 #include "Move.h"
 
+/**
+ * @brief A class representing a chess board
+ * Contains information about the board, including:
+ * - The squares on the board (including the pieces on them)
+ * - Which color's turn it is
+ * - What castling is possible
+ * - What en passant is possible
+ */
 class Board {
     Square * squares[8][8];
     std::string enPassant;
-    bool original;
     bool turn; // 0 for white, 1 for black
     bool canCastleKingsideWhite;
     bool canCastleQueensideWhite;
     bool canCastleKingsideBlack;
     bool canCastleQueensideBlack;
 public:
-    Board(bool original_ = true);
+    Board();
+    Board(const Board & board);
     void setup();
     void print(bool withCoords = false) const;
     void light(std::string square, bool lit = true) {
         getSquare(square)->setLit(true);
     }
-    bool move(Move move);
+    bool makeMove(Move move);
     /**
      * @brief Get the Square object at a given square
      * 
@@ -58,14 +66,17 @@ public:
      */
     std::string findKing(bool color) const;
     /**
-     * @brief Determines if a given color is in check
+     * @brief Determines if a king would be in check if it were on a given square
      * 
-     * @param color The color of the king to check
-     * @return bool Whether or not the king is in check
+     * @param color The color of the king
+     * @param square The square the king would be on
+     * @return bool Whether the king would be in check
      */
-    bool inCheck(bool color) const;
+    bool inCheck(bool color, std::string kingSquare) const;
     /**
      * @brief Determines if a given move is legal
+     * A move is legal if it is not a move that would put the king in check
+     * or tries to castle in or through check
      * 
      * @param move The move to check
      * @return bool Whether or not the move is legal
