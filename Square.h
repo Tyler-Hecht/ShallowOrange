@@ -34,5 +34,11 @@ public:
     }
     Piece * getPiece() const {
         return piece;
-    }
+    }/**
+     * @brief Turns a rank and file into a square name
+     * 
+     * @param rank The rank of the square as an integer
+     * @param file The file of the square as an integer
+     * @return std::string 
+     */
 };

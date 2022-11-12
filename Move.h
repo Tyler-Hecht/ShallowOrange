@@ -14,14 +14,14 @@ class Move {
     int promotionType; // If a promotion, the type of piece to promote to
     bool castle; // Whether the move is a castle
     bool enPassant; // Whether the move is en passant!!
+    char disambiguation; // The file and/or rank of the piece being moved, if needed for disambiguation
     bool check; // Whether the move is a check
     bool checkmate; // Whether the move is a checkmate
-    char disambiguation; // The file and/or rank of the piece being moved, if needed for disambiguation
 public:
     /**
      * @brief If you can't figure out what these functions do why are you looking at this
      */
-    Move(char piece_, std::string from_, std::string to_, bool capture_ = false, bool promotion_ = false, int promotionType_ = 0, bool castle_ = false, bool enPassant_ = false, bool check_ = false, bool checkmate_ = false, char disambiguation_ = '\0') {
+    Move(char piece_, std::string from_, std::string to_, bool capture_ = false, bool promotion_ = false, int promotionType_ = 0, bool castle_ = false, bool enPassant_ = false, char disambiguation_ = '\0', bool check_ = false, bool checkmate_ = false) {
         piece = piece_;
         from = from_;
         to = to_;
@@ -71,6 +71,16 @@ public:
     }
     char getDisambiguation() const {
         return disambiguation;
+    }
+
+    /**
+     * @brief Makes the move a check or checkmate
+     * 
+     * @param mate Whether the move is checkmate
+     */
+    void makeCheck(bool mate) {
+        check = true;
+        checkmate = mate;
     }
 
     /**

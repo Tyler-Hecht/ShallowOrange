@@ -32,25 +32,25 @@ Board::Board(const Board & board) {
 
 void Board::setup() {
     for (string file : {"a", "b", "c", "d", "e", "f", "g", "h"}) {
-        getSquare(file + "2")->setPiece(new Piece('P', 0));
-        getSquare(file + "7")->setPiece(new Piece('P', 1));
+        getSquare(file + "2")->setPiece(new Piece('P', 1));
+        getSquare(file + "7")->setPiece(new Piece('P', 0));
     }
-    getSquare("a1")->setPiece(new Piece('R', 0));
-    getSquare("b1")->setPiece(new Piece('N', 0));
-    getSquare("c1")->setPiece(new Piece('B', 0));
-    getSquare("d1")->setPiece(new Piece('Q', 0));
-    getSquare("e1")->setPiece(new Piece('K', 0));
-    getSquare("f1")->setPiece(new Piece('B', 0));
-    getSquare("g1")->setPiece(new Piece('N', 0));
-    getSquare("h1")->setPiece(new Piece('R', 0));
-    getSquare("a8")->setPiece(new Piece('R', 1));
-    getSquare("b8")->setPiece(new Piece('N', 1));
-    getSquare("c8")->setPiece(new Piece('B', 1));
-    getSquare("d8")->setPiece(new Piece('Q', 1));
-    getSquare("e8")->setPiece(new Piece('K', 1));
-    getSquare("f8")->setPiece(new Piece('B', 1));
-    getSquare("g8")->setPiece(new Piece('N', 1));
-    getSquare("h8")->setPiece(new Piece('R', 1));
+    getSquare("a1")->setPiece(new Piece('R', 1));
+    getSquare("b1")->setPiece(new Piece('N', 1));
+    getSquare("c1")->setPiece(new Piece('B', 1));
+    getSquare("d1")->setPiece(new Piece('Q', 1));
+    getSquare("e1")->setPiece(new Piece('K', 1));
+    getSquare("f1")->setPiece(new Piece('B', 1));
+    getSquare("g1")->setPiece(new Piece('N', 1));
+    getSquare("h1")->setPiece(new Piece('R', 1));
+    getSquare("a8")->setPiece(new Piece('R', 0));
+    getSquare("b8")->setPiece(new Piece('N', 0));
+    getSquare("c8")->setPiece(new Piece('B', 0));
+    getSquare("d8")->setPiece(new Piece('Q', 0));
+    getSquare("e8")->setPiece(new Piece('K', 0));
+    getSquare("f8")->setPiece(new Piece('B', 0));
+    getSquare("g8")->setPiece(new Piece('N', 0));
+    getSquare("h8")->setPiece(new Piece('R', 0));
 }
 
 void Board::print(bool withCoords) const {
@@ -229,7 +229,7 @@ bool Board::inCheck(bool color, std::string kingSquare) const {
     }
     vector<string> pawnMoves;
     //work backwards to find possible pawn moves
-    if (!color) {
+    if (color) {
         pawnMoves.push_back(to_string(kingSquare[0] - 'a' - 1) + to_string(kingSquare[1] - '1' - 1));
         pawnMoves.push_back(to_string(kingSquare[0] - 'a' + 1) + to_string(kingSquare[1] - '1' - 1));
     } else {
@@ -290,6 +290,71 @@ bool Board::isLegal(Move move) const {
     return true;
 }
 
+string asString(int file, int rank) {
+    string to_return = "";
+    to_return += (char)('a' + file);
+    to_return += (char)('1' + rank);
+    return to_return;
+}
+
+vector<Move> Board::getPawnMoves(string square) const {
+    vector<Move> moves;
+    int file = square[0] - 'a';
+    int rank = square[1] - '1';
+    bool color = getSquare(square)->getPiece()->getColor();
+    int colorMultiplier = color ? 1 : -1;
+    // move forward
+    if (getSquare(asString(file, rank + colorMultiplier))->getPiece() == NULL) {
+        // promotion
+        if (color && rank == 7 || !color && rank == 0) {
+            moves.push_back(Move('P', square, asString(file, rank + colorMultiplier), false, true, 'Q'));
+            moves.push_back(Move('P', square, asString(file, rank + colorMultiplier), false, true, 'R'));
+            moves.push_back(Move('P', square, asString(file, rank + colorMultiplier), false, true, 'B'));
+            moves.push_back(Move('P', square, asString(file, rank + colorMultiplier), false, true, 'N'));
+        } else {
+            moves.push_back(Move('P', square, asString(file, rank + colorMultiplier)));
+        }
+        // move two squares
+        if (rank == (color ? 1 : 6) && getSquare(asString(file, rank + 2 * colorMultiplier))->getPiece() == NULL) {
+            moves.push_back(Move('P', square, asString(file, rank + 2 * colorMultiplier)));
+        }
+    }
+    // capture left
+    if (file > 0 && getSquare(asString(file-1,rank+colorMultiplier))->getPiece() != NULL && getSquare(asString(file-1,rank+colorMultiplier))->getPiece()->getColor() != color) {
+        // promotion
+        if (color && rank == 7 || !color && rank == 0) {
+            moves.push_back(Move('P', square, asString(file - 1, rank + colorMultiplier), true, true, 'Q'));
+            moves.push_back(Move('P', square, asString(file - 1, rank + colorMultiplier), true, true, 'R'));
+            moves.push_back(Move('P', square, asString(file - 1, rank + colorMultiplier), true, true, 'B'));
+            moves.push_back(Move('P', square, asString(file - 1, rank + colorMultiplier), true, true, 'N'));
+        } else {
+            moves.push_back(Move('P', square, asString(file - 1, rank + colorMultiplier), true));
+        }
+    }
+    // capture right
+    if (file < 7 && getSquare(asString(file+1,rank+colorMultiplier))->getPiece() != NULL && getSquare(asString(file-1, rank+colorMultiplier))->getPiece()->getColor() != color) {
+        // promotion
+        if (color && rank == 7 || !color && rank == 0) {
+            moves.push_back(Move('P', square, asString(file + 1, rank + colorMultiplier), true, true, 'Q'));
+            moves.push_back(Move('P', square, asString(file + 1, rank + colorMultiplier), true, true, 'R'));
+            moves.push_back(Move('P', square, asString(file + 1, rank + colorMultiplier), true, true, 'B'));
+            moves.push_back(Move('P', square, asString(file + 1, rank + colorMultiplier), true, true, 'N'));
+        } else {
+            moves.push_back(Move('P', square, asString(file + 1, rank + colorMultiplier), true));
+        }
+    }
+    // en passant
+    if (enPassant != "") {
+        if (enPassant == asString(file - 1, rank + colorMultiplier)) {
+            moves.push_back(Move('P', square, asString(file - 1, rank + colorMultiplier), true, false, ' ', true));
+        }
+        if (enPassant == asString(file + 1, rank + colorMultiplier)) {
+            moves.push_back(Move('P', square, asString(file + 1, rank + colorMultiplier), true, false, ' ', true));
+        }
+    }
+    return moves;
+}
+
 vector<Move> Board::getMoves(string square) const {
     // no piece on square
     if (getSquare(square)->getPiece() == NULL) {
@@ -300,5 +365,40 @@ vector<Move> Board::getMoves(string square) const {
         return vector<Move>();
     }
     vector<Move> moves;
+    switch (getSquare(square)->getPiece()->getSymbol()) {
+        case 'P':
+            moves = getPawnMoves(square);
+            break;
+        case 'N':
+            moves = getKnightMoves(square);
+            break;
+        case 'B':
+            moves = getBishopMoves(square);
+            break;
+        case 'R':
+            moves = getRookMoves(square);
+            break;
+        case 'Q':
+            moves = getQueenMoves(square);
+            break;
+        case 'K':
+            moves = getKingMoves(square);
+            break;
+    }
+    // check if moves are legal
+    vector<Move> legalMoves;
+    for (Move move : moves) {
+        if (isLegal(move)) {
+            legalMoves.push_back(move);
+        }
+    }
+    // add check to moves
+    for (Move move : legalMoves) {
+        Board * tmp = new Board(*this);
+        tmp->makeMove(move);
+        if (tmp->inCheck(!turn, tmp->findKing(!turn))) {
+            move.makeCheck(tmp->inCheckmate(!turn, tmp->findKing(!turn)));
+        }
+    }
     return moves;
 }

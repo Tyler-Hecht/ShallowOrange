@@ -3,21 +3,10 @@
 using namespace std;
 
 ostream& operator<<(ostream& os, const Piece& piece) {
-    if (piece.getSymbol() == '\0') {
-        if (!piece.getColor()) {
-            os << "P";
-        }
-        else {
-            os << 'p';
-        }
-    }
-    else {
-        if (!piece.getColor()) {
+    if (piece.getColor()) {
             os << piece.getSymbol();
-        }
-        else {
+    } else {
             os << (char)tolower(piece.getSymbol());
-        }
     }
     return os;
 }

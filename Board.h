@@ -79,6 +79,14 @@ public:
      */
     bool inCheck(bool color, std::string kingSquare) const;
     /**
+     * @brief Determines if a king is in checkmate
+     * 
+     * @param color The color of the king
+     * @param kingSquare The square the king is on
+     * @return bool Whether the king is in checkmate
+     */
+    bool inCheckmate(bool color, std::string kingSquare) const {return false;}
+    /**
      * @brief Determines if a given move is legal
      * A move is legal if it is not a move that would put the king in check
      * or tries to castle in or through check
@@ -87,6 +95,13 @@ public:
      * @return bool Whether or not the move is legal
      */
     bool isLegal(Move move) const;
+
+    std::vector<Move> getPawnMoves(std::string square) const;
+    std::vector<Move> getKnightMoves(std::string square) const {};
+    std::vector<Move> getRookMoves(std::string square) const {};
+    std::vector<Move> getBishopMoves(std::string square) const {};
+    std::vector<Move> getQueenMoves(std::string square) const {};
+    std::vector<Move> getKingMoves(std::string square) const {};
 
     /**
      * @brief Gets all the possible legal moves for a given square
@@ -97,3 +112,12 @@ public:
      */
     std::vector<Move> getMoves(std::string square) const;
 };
+
+/**
+ * @brief Gets the name of a square from its coordinates
+ * 
+ * @param rank The rank of the square as an integer, 0-7
+ * @param file The file of the square as an integer, 0-7
+ * @return string The name of the square
+ */
+std::string asString(int rank, int file);
