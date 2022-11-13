@@ -3,7 +3,7 @@
 using namespace std;
 
 Board::Board() {
-    turn = 0;
+    turn = 1;
     enPassant = "";
     canCastleKingsideWhite = true;
     canCastleQueensideWhite = true;
@@ -148,6 +148,7 @@ void Board::makeMove(Move move) {
     } else {
         enPassant = "";
     }
+    turn = !turn;
 }
 
 vector<string> Board::knightSquares(string square) const {
@@ -355,7 +356,7 @@ vector<Move> Board::getPawnMoves(string square) const {
     return moves;
 }
 
-vector<Move> Board::getNBRMoves(string square, char symbol) const {
+vector<Move> Board::getNBRQMoves(string square, char symbol) const {
     vector<Move> moves;
     bool color = getSquare(square)->getPiece()->getColor();
     vector<string> squares;
@@ -365,21 +366,18 @@ vector<Move> Board::getNBRMoves(string square, char symbol) const {
         squares = rbSquares(square, false);
     } else if (symbol == 'R') {
         squares = rbSquares(square, true);
+    } else if (symbol == 'Q') {
+        squares = rbSquares(square, true);
+        vector<string> tmp = rbSquares(square, false);
+        squares.insert(squares.end(), tmp.begin(), tmp.end());
     }
     for (int i = 0; i < squares.size(); i++) {
         if (getSquare(squares[i])->getPiece() == NULL) {
-            moves.push_back(Move('N', square, squares[i]));
+            moves.push_back(Move(symbol, square, squares[i]));
         } else if (getSquare(squares[i])->getPiece()->getColor() != color) {
-            moves.push_back(Move('N', square, squares[i], true));
+            moves.push_back(Move(symbol, square, squares[i], true));
         }
     }
-    return moves;
-}
-
-vector<Move> Board::getQueenMoves(string square) const {
-    vector<Move> moves = getNBRMoves(square, 'B');
-    vector<Move> tmp = getNBRMoves(square, 'R');
-    moves.insert(moves.end(), tmp.begin(), tmp.end());
     return moves;
 }
 
@@ -437,19 +435,19 @@ vector<Move> Board::getMoves(string square) const {
             moves = getPawnMoves(square);
             break;
         case 'N':
-            moves = getNBRMoves(square, 'N');
+            moves = getNBRQMoves(square, 'N');
             break;
         case 'B':
-            moves = getNBRMoves(square, 'B');
+            moves = getNBRQMoves(square, 'B');
             break;
         case 'R':
-            moves = getNBRMoves(square, 'R');
+            moves = getNBRQMoves(square, 'R');
             break;
         case 'Q':
-            moves = getNBRMoves(square, 'Q');
+            moves = getNBRQMoves(square, 'Q');
             break;
         case 'K':
-            moves = getNBRMoves(square, 'K');
+            moves = getKingMoves(square);
             break;
     }
     // check if moves are legal
@@ -465,6 +463,51 @@ vector<Move> Board::getMoves(string square) const {
         tmp->makeMove(move);
         if (tmp->inCheck(!turn, tmp->findKing(!turn))) {
             move.makeCheck(tmp->inCheckmate(!turn, tmp->findKing(!turn)));
+        }
+    }
+    return moves;
+}
+
+vector<Move> Board::getAllMoves() const {
+    vector<Move> moves;
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            vector<Move> tmp = getMoves(asString(i, j));
+            moves.insert(moves.end(), tmp.begin(), tmp.end());
+        }
+    }
+    // handle disambiguation
+    for (int i = 0; i < moves.size(); i++) {
+        vector<Move> disamb = {moves[i]};
+        for (int j = i + 1; j < moves.size(); j++) {
+            if (moves[i].getTo() == moves[j].getTo() && moves[i].getPiece() == moves[j].getPiece()) {
+                disamb.push_back(moves[j]);
+            }
+        }
+        if (disamb.size() > 1) {
+            bool differentFiles = true;
+            bool differentRanks = true;
+            for (int j = 0; j < disamb.size(); j++) {
+                for (int k = j + 1; k < disamb.size(); k++) {
+                    if (disamb[j].getFrom()[0] == disamb[k].getFrom()[0]) {
+                        differentFiles = false;
+                    }
+                    if (disamb[j].getFrom()[1] == disamb[k].getFrom()[1]) {
+                        differentRanks = false;
+                    }
+                }
+            }
+            for (int j = 0; j < disamb.size(); j++) {
+                if (differentFiles && !differentRanks) {
+                    disamb[j].setDisambiguation(to_string(disamb[j].getFrom()[0]));
+                }
+                if (!differentFiles && differentRanks) {
+                    disamb[j].setDisambiguation(to_string(disamb[j].getFrom()[1]));
+                }
+                if (differentFiles && differentRanks) {
+                    disamb[j].setDisambiguation(disamb[j].getFrom());
+                }
+            }
         }
     }
     return moves;

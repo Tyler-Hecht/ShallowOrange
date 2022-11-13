@@ -15,7 +15,7 @@
 class Board {
     Square * squares[8][8];
     std::string enPassant;
-    bool turn; // 0 for white, 1 for black
+    bool turn; // 1 for white, 0 for black
     bool canCastleKingsideWhite;
     bool canCastleQueensideWhite;
     bool canCastleKingsideBlack;
@@ -96,19 +96,46 @@ public:
      */
     bool isLegal(Move move) const;
 
+    /**
+     * @brief Gets all the possible pawn moves for a given square
+     * 
+     * @param square The square the pawn is on
+     * @return std::vector<Move> All the possible moves for the pawn
+     */
     std::vector<Move> getPawnMoves(std::string square) const;
-    std::vector<Move> getNBRMoves(std::string square, char symbol) const;
-    std::vector<Move> getQueenMoves(std::string square) const;
+    /**
+     * @brief Gets all the possible knight, bishop, rook, or queen moves for a given square
+     * 
+     * @param square The square the piece is on
+     * @param symbol The symbol of the piece: 'N', 'B', 'R', or 'Q'
+     * @return std::vector<Move> All the possible moves for the piece
+     */
+    std::vector<Move> getNBRQMoves(std::string square, char symbol) const;
+    /**
+     * @brief Gets all the possible king moves for a given square
+     * 
+     * @param square The square the king is on
+     * @return std::vector<Move> All the possible moves for the king
+     */
     std::vector<Move> getKingMoves(std::string square) const;
 
     /**
      * @brief Gets all the possible legal moves for a given square
      * The piece on the square must be the same color as the turn
+     * Disambiguation is not handled
      * 
      * @param square The square to get the moves for
      * @return std::vector<Move> All the possible moves for the square
      */
     std::vector<Move> getMoves(std::string square) const;
+
+    /**
+     * @brief Gets all possible legal moves in the current position
+     * Disambiguation is handled
+     * 
+     * @return std::vector<Move> All the possible moves
+     */
+    std::vector<Move> getAllMoves() const;
 };
 
 /**
