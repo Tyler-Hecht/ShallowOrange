@@ -7,8 +7,14 @@ using namespace std;
 
 int main() {
     Board board;
-    board.readFEN("8/5P2/8/1n6/2k3K1/8/8/8 w - - 0 1");
+    board.readFEN("5r2/4n2k/Brp5/pP2p1pN/P3P3/K4P1P/2PB3Q/3r2R1 w - - 0 1");
     board.print();
+    vector<Move> moves = board.getAllMoves();
+    for (Move move : moves) {
+        cout << move << ", ";
+    }
+    cout << endl;
+    cout << "Number of moves: " << moves.size() << endl;
     /*
     while (true) {
         vector<Move> moves = board.getAllMoves();

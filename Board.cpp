@@ -221,15 +221,15 @@ bool Board::inCheck(bool color, std::string kingSquare) const {
     }
     vector<string> pawnMoves;
     //work backwards to find possible pawn moves
-    if (color) {
-        pawnMoves.push_back(to_string(kingSquare[0] - 'a' - 1) + to_string(kingSquare[1] - '1' - 1));
-        pawnMoves.push_back(to_string(kingSquare[0] - 'a' + 1) + to_string(kingSquare[1] - '1' - 1));
+    if (!color) {
+        pawnMoves.push_back(asString(kingSquare[0] - 'a' - 1, kingSquare[1] - '1' - 1));
+        pawnMoves.push_back(asString(kingSquare[0] - 'a' + 1, kingSquare[1] - '1' - 1));
     } else {
-        pawnMoves.push_back(to_string(kingSquare[0] - 'a' - 1) + to_string(kingSquare[1] - '1' + 1));
-        pawnMoves.push_back(to_string(kingSquare[0] - 'a' + 1) + to_string(kingSquare[1] - '1' + 1));
+        pawnMoves.push_back(asString(kingSquare[0] - 'a' - 1, kingSquare[1] - '1' + 1));
+        pawnMoves.push_back(asString(kingSquare[0] - 'a' + 1, kingSquare[1] - '1' + 1));
     }
     for (string square : pawnMoves) {
-        if (square[0] >= 0 && square[0] < 8 && square[1] >= 0 && square[1] < 8) {
+        if (square[0] >= 'a' && square[0] <= 'h' && square[1] >= '1' && square[1] <= '8') {
             Piece * piece = getSquare(square)->getPiece();
             if (piece != NULL && piece->getSymbol() == 'P' && piece->getColor() != color) {
                 return true;
