@@ -5,6 +5,8 @@ using namespace std;
 Board::Board() {
     turn = 1;
     enPassant = "";
+    halfmoveClock = 0;
+    fullmoveNumber = 1;
     canCastleKingsideWhite = true;
     canCastleQueensideWhite = true;
     canCastleKingsideBlack = true;
@@ -149,6 +151,14 @@ void Board::makeMove(Move move) {
         enPassant = "";
     }
     turn = !turn;
+    if (move.getPiece() == 'P' || move.isCapture()) {
+        halfmoveClock = 0;
+    } else {
+        halfmoveClock++;
+    }
+    if (!turn) {
+        fullmoveNumber++;
+    }
 }
 
 vector<string> Board::knightSquares(string square) const {
@@ -198,7 +208,7 @@ string Board::findKing(bool color) const {
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
             if (squares[i][j]->getPiece() != NULL && squares[i][j]->getPiece()->getSymbol() == 'K' && squares[i][j]->getPiece()->getColor() == color) {
-                return string(1, i) + string(1, j);
+                return asString(i, j);
             }
         }
     }
@@ -206,7 +216,7 @@ string Board::findKing(bool color) const {
 }
 
 bool Board::inCheck(bool color, std::string kingSquare) const {
-    //detect check by knight
+    //detect check by knight, bishop, rook, queen
     vector<string> knightMoves = knightSquares(kingSquare);
     for (string square : knightMoves) {
         Piece * piece = getSquare(square)->getPiece();
@@ -283,7 +293,7 @@ bool Board::isLegal(Move move) const {
     // not legal if trying to move into check
     Board * tmp = new Board(*this);
     tmp->makeMove(move);
-    if (tmp->inCheck(turn, tmp->findKing(turn))) {
+    if (tmp->inCheck(!tmp->turn, tmp->findKing(!tmp->turn))) {
         delete tmp;
         return false;
     }
@@ -307,7 +317,7 @@ vector<Move> Board::getPawnMoves(string square) const {
     // move forward
     if (getSquare(asString(file, rank + colorMultiplier))->getPiece() == NULL) {
         // promotion
-        if (color && rank == 7 || !color && rank == 0) {
+        if (color && rank == 6 || !color && rank == 1) {
             moves.push_back(Move('P', square, asString(file, rank + colorMultiplier), false, true, 'Q'));
             moves.push_back(Move('P', square, asString(file, rank + colorMultiplier), false, true, 'R'));
             moves.push_back(Move('P', square, asString(file, rank + colorMultiplier), false, true, 'B'));
@@ -323,7 +333,7 @@ vector<Move> Board::getPawnMoves(string square) const {
     // capture left
     if (file > 0 && getSquare(asString(file-1,rank+colorMultiplier))->getPiece() != NULL && getSquare(asString(file-1,rank+colorMultiplier))->getPiece()->getColor() != color) {
         // promotion
-        if (color && rank == 7 || !color && rank == 0) {
+        if (color && rank == 6 || !color && rank == 1) {
             moves.push_back(Move('P', square, asString(file - 1, rank + colorMultiplier), true, true, 'Q'));
             moves.push_back(Move('P', square, asString(file - 1, rank + colorMultiplier), true, true, 'R'));
             moves.push_back(Move('P', square, asString(file - 1, rank + colorMultiplier), true, true, 'B'));
@@ -333,9 +343,9 @@ vector<Move> Board::getPawnMoves(string square) const {
         }
     }
     // capture right
-    if (file < 7 && getSquare(asString(file+1,rank+colorMultiplier))->getPiece() != NULL && getSquare(asString(file-1, rank+colorMultiplier))->getPiece()->getColor() != color) {
+    if (file < 7 && getSquare(asString(file+1,rank+colorMultiplier))->getPiece() != NULL && getSquare(asString(file+1, rank+colorMultiplier))->getPiece()->getColor() != color) {
         // promotion
-        if (color && rank == 7 || !color && rank == 0) {
+        if (color && rank == 6 || !color && rank == 1) {
             moves.push_back(Move('P', square, asString(file + 1, rank + colorMultiplier), true, true, 'Q'));
             moves.push_back(Move('P', square, asString(file + 1, rank + colorMultiplier), true, true, 'R'));
             moves.push_back(Move('P', square, asString(file + 1, rank + colorMultiplier), true, true, 'B'));
@@ -465,7 +475,7 @@ vector<Move> Board::getMoves(string square) const {
             move.makeCheck(tmp->inCheckmate(!turn, tmp->findKing(!turn)));
         }
     }
-    return moves;
+    return legalMoves;
 }
 
 vector<Move> Board::getAllMoves() const {
@@ -516,4 +526,115 @@ vector<Move> Board::getAllMoves() const {
 Move Board::readMove(string str) const {
     Move move;
     return move;
+}
+
+void Board::readFEN(string fen) {
+    int rank = 7;
+    int file = 0;
+    int i = 0;
+    char c = fen[i];
+    while (c != ' ') {
+        if (c == '/') {
+            rank--;
+            file = 0;
+        } else if (c >= '1' && c <= '8') {
+            file += c - '0';
+        } else {
+            bool color = isupper(c) ? true : false;
+            squares[file][rank]->setPiece(new Piece(toupper(c), color));
+            file++;
+        }
+        i++;
+        c = fen[i];
+    }
+    i++;
+    turn = (fen[i] == 'w') ? true : false;
+    i += 2;
+    string castle = "";
+    while (fen[i] != ' ') {
+        castle += fen[i];
+        i++;
+    }
+    for (char c : castle) {
+        if (c == 'K') {
+            canCastleKingsideWhite = true;
+        }
+        if (c == 'Q') {
+            canCastleQueensideWhite = true;
+        }
+        if (c == 'k') {
+            canCastleKingsideBlack = true;
+        }
+        if (c == 'q') {
+            canCastleQueensideBlack = true;
+        }
+    }
+    i++;
+    if (fen[i] != '-') {
+        enPassant = fen[i] + fen[i + 1];
+        i += 2;
+    } else {
+        enPassant = "";
+        i++;
+    }
+    i++;
+    string halfmove = "";
+    while (fen[i] != ' ') {
+        halfmove += fen[i];
+        i++;
+    }
+    halfmoveClock = stoi(halfmove);
+    i++;
+    string fullmove = "";
+    while (i < fen.length()) {
+        fullmove += fen[i];
+        i++;
+    }
+    fullmoveNumber = stoi(fullmove);
+}
+
+string Board::writeFEN() const {
+    string fen = "";
+    for (int rank = 7; rank >= 0; rank--) {
+        int empty = 0;
+        for (int file = 0; file < 8; file++) {
+            if (squares[file][rank]->getPiece() == NULL) {
+                empty++;
+            } else {
+                if (empty > 0) {
+                    fen += to_string(empty);
+                    empty = 0;
+                }
+                fen += squares[file][rank]->getPiece()->getSymbol();
+            }
+        }
+        if (rank != 0) {
+            fen += '/';
+        }
+    }
+    fen += ' ';
+    fen += (turn) ? 'w' : 'b';
+    fen += ' ';
+    if (canCastleKingsideWhite) {
+        fen += 'K';
+    }
+    if (canCastleQueensideWhite) {
+        fen += 'Q';
+    }
+    if (canCastleKingsideBlack) {
+        fen += 'k';
+    }
+    if (canCastleQueensideBlack) {
+        fen += 'q';
+    }
+    if (fen[fen.size() - 1] == ' ') {
+        fen += '-';
+    }
+    fen += ' ';
+    fen += (enPassant == "") ? "-" : enPassant;
+    fen += ' ';
+    fen += to_string(halfmoveClock);
+    fen += ' ';
+    fen += to_string(fullmoveNumber);
+    return fen;
 }

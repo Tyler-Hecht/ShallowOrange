@@ -20,6 +20,8 @@ class Board {
     bool canCastleQueensideWhite;
     bool canCastleKingsideBlack;
     bool canCastleQueensideBlack;
+    int halfmoveClock;
+    int fullmoveNumber;
 public:
     Board();
     Board(const Board & board);
@@ -145,6 +147,9 @@ public:
      * @return Move The move
      */
     Move readMove(std::string str) const;
+
+    void readFEN(std::string fen);
+    std::string writeFEN() const;
 };
 
 /**
