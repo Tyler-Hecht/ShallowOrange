@@ -87,7 +87,9 @@ public:
      * @param kingSquare The square the king is on
      * @return bool Whether the king is in checkmate
      */
-    bool inCheckmate(bool color, std::string kingSquare) const {return false;}
+    bool inCheckmate(bool color, std::string kingSquare) const {
+        return inCheck(color, kingSquare) && getAllMoves().size() == 0;
+    }
     /**
      * @brief Determines if a given move is legal
      * A move is legal if it is not a move that would put the king in check

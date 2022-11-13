@@ -468,12 +468,13 @@ vector<Move> Board::getMoves(string square) const {
         }
     }
     // add check to moves
-    for (Move move : legalMoves) {
+    for (int i = 0; i < legalMoves.size(); i++) {
         Board * tmp = new Board(*this);
-        tmp->makeMove(move);
-        if (tmp->inCheck(!turn, tmp->findKing(!turn))) {
-            move.makeCheck(tmp->inCheckmate(!turn, tmp->findKing(!turn)));
+        tmp->makeMove(legalMoves[i]);
+        if (tmp->inCheck(tmp->turn, tmp->findKing(tmp->turn))) {
+            legalMoves[i].makeCheck(tmp->inCheckmate(!turn, tmp->findKing(!turn)));
         }
+        delete tmp;
     }
     return legalMoves;
 }
