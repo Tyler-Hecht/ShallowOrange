@@ -7,13 +7,19 @@ using namespace std;
 
 int main() {
     Board board;
-    board.readFEN("rnb1kbnr/pppp1ppp/8/4p3/4P2q/5N2/PPPPKPPP/RNBQ1B1R b kq - 3 3");
+    board.readFEN("8/5P2/8/1n6/2k3K1/8/8/8 w - - 0 1");
     board.print();
-    vector<Move> moves = board.getAllMoves();
-    for (Move move : moves) {
-        cout << move << ", ";
+    /*
+    while (true) {
+        vector<Move> moves = board.getAllMoves();
+        cout << "Possible moves: " << moves.size() << endl;
+        if (moves.size() == 0) {
+            cout << "No moves" << endl;
+            break;
+        }
+        board.makeMove(moves[rand() % moves.size()]);
+        board.print();
     }
-    cout << moves.size() << " possible moves" << endl;
-    cout << board.writeFEN() << endl;
+    */
     return 0;
 }

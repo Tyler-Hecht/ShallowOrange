@@ -7,10 +7,10 @@ Board::Board() {
     enPassant = "";
     halfmoveClock = 0;
     fullmoveNumber = 1;
-    canCastleKingsideWhite = true;
-    canCastleQueensideWhite = true;
-    canCastleKingsideBlack = true;
-    canCastleQueensideBlack = true;
+    canCastleKingsideWhite = false;
+    canCastleQueensideWhite = false;
+    canCastleKingsideBlack = false;
+    canCastleQueensideBlack = false;
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
             squares[i][j] = new Square();
@@ -33,26 +33,7 @@ Board::Board(const Board & board) {
 }
 
 void Board::setup() {
-    for (string file : {"a", "b", "c", "d", "e", "f", "g", "h"}) {
-        getSquare(file + "2")->setPiece(new Piece('P', 1));
-        getSquare(file + "7")->setPiece(new Piece('P', 0));
-    }
-    getSquare("a1")->setPiece(new Piece('R', 1));
-    getSquare("b1")->setPiece(new Piece('N', 1));
-    getSquare("c1")->setPiece(new Piece('B', 1));
-    getSquare("d1")->setPiece(new Piece('Q', 1));
-    getSquare("e1")->setPiece(new Piece('K', 1));
-    getSquare("f1")->setPiece(new Piece('B', 1));
-    getSquare("g1")->setPiece(new Piece('N', 1));
-    getSquare("h1")->setPiece(new Piece('R', 1));
-    getSquare("a8")->setPiece(new Piece('R', 0));
-    getSquare("b8")->setPiece(new Piece('N', 0));
-    getSquare("c8")->setPiece(new Piece('B', 0));
-    getSquare("d8")->setPiece(new Piece('Q', 0));
-    getSquare("e8")->setPiece(new Piece('K', 0));
-    getSquare("f8")->setPiece(new Piece('B', 0));
-    getSquare("g8")->setPiece(new Piece('N', 0));
-    getSquare("h8")->setPiece(new Piece('R', 0));
+    readFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 }
 
 void Board::print(bool withCoords) const {

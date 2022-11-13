@@ -29,7 +29,8 @@ string Move::toString() const {
     }
     move += to;
     if (promotion) {
-        move += "=" + to_string(promotionType);
+        move += "=";
+        move.push_back(promotionType);
     }
     if (checkmate) {
         move += "#";

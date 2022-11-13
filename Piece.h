@@ -15,7 +15,7 @@ public:
     }
     bool getColor() const { return color; }
     void promote(char symbol_) {
-        if (symbol == 0) {
+        if (symbol == 'P') {
             symbol = symbol_;
         }
     }
