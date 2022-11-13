@@ -236,6 +236,18 @@ bool Board::inCheck(bool color, std::string kingSquare) const {
             }
         }
     }
+    // detect "check" by king
+    vector<pair<int, int>> kingMoves = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
+    for (pair<int, int> move : kingMoves) {
+        int file = kingSquare[0] - 'a' + move.first;
+        int rank = kingSquare[1] - '1' + move.second;
+        if (file >= 0 && file < 8 && rank >= 0 && rank < 8) {
+            Piece * piece = getSquare(asString(file, rank))->getPiece();
+            if (piece != NULL && piece->getSymbol() == 'K' && piece->getColor() != color) {
+                return true;
+            }
+        }
+    }
     //no check
     return false;
 }
