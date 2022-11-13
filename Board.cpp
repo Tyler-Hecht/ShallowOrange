@@ -346,10 +346,77 @@ vector<Move> Board::getPawnMoves(string square) const {
     // en passant
     if (enPassant != "") {
         if (enPassant == asString(file - 1, rank + colorMultiplier)) {
-            moves.push_back(Move('P', square, asString(file - 1, rank + colorMultiplier), true, false, ' ', true));
+            moves.push_back(Move('P', square, asString(file - 1, rank + colorMultiplier), true, false, ' ', false, true));
         }
         if (enPassant == asString(file + 1, rank + colorMultiplier)) {
-            moves.push_back(Move('P', square, asString(file + 1, rank + colorMultiplier), true, false, ' ', true));
+            moves.push_back(Move('P', square, asString(file + 1, rank + colorMultiplier), true, false, ' ', false, true));
+        }
+    }
+    return moves;
+}
+
+vector<Move> Board::getNBRMoves(string square, char symbol) const {
+    vector<Move> moves;
+    bool color = getSquare(square)->getPiece()->getColor();
+    vector<string> squares;
+    if (symbol == 'N') {
+        squares = knightSquares(square);
+    } else if (symbol == 'B') {
+        squares = rbSquares(square, false);
+    } else if (symbol == 'R') {
+        squares = rbSquares(square, true);
+    }
+    for (int i = 0; i < squares.size(); i++) {
+        if (getSquare(squares[i])->getPiece() == NULL) {
+            moves.push_back(Move('N', square, squares[i]));
+        } else if (getSquare(squares[i])->getPiece()->getColor() != color) {
+            moves.push_back(Move('N', square, squares[i], true));
+        }
+    }
+    return moves;
+}
+
+vector<Move> Board::getQueenMoves(string square) const {
+    vector<Move> moves = getNBRMoves(square, 'B');
+    vector<Move> tmp = getNBRMoves(square, 'R');
+    moves.insert(moves.end(), tmp.begin(), tmp.end());
+    return moves;
+}
+
+vector<Move> Board::getKingMoves(string square) const {
+    vector<Move> moves;
+    bool color = getSquare(square)->getPiece()->getColor();
+    vector<pair<int, int>> offsets = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
+    for (int i = 0; i < offsets.size(); i++) {
+        int file = square[0] - 'a' + offsets[i].first;
+        int rank = square[1] - '1' + offsets[i].second;
+        if (file >= 0 && file <= 7 && rank >= 0 && rank <= 7) {
+            if (getSquare(asString(file, rank))->getPiece() == NULL) {
+                moves.push_back(Move('K', square, asString(file, rank)));
+            } else if (getSquare(asString(file, rank))->getPiece()->getColor() != color) {
+                moves.push_back(Move('K', square, asString(file, rank), true));
+            }
+        }
+    }
+    // castling
+    if (color && canCastleKingsideWhite) {
+        if (getSquare("f1")->getPiece() == NULL && getSquare("g1")->getPiece() == NULL) {
+            moves.push_back(Move('K', square, "g1", false, false, ' ', true));
+        }
+    }
+    if (color && canCastleQueensideWhite) {
+        if (getSquare("d1")->getPiece() == NULL && getSquare("c1")->getPiece() == NULL && getSquare("b1")->getPiece() == NULL) {
+            moves.push_back(Move('K', square, "c1", false, false, ' ', true));
+        }
+    }
+    if (!color && canCastleKingsideBlack) {
+        if (getSquare("f8")->getPiece() == NULL && getSquare("g8")->getPiece() == NULL) {
+            moves.push_back(Move('K', square, "g8", false, false, ' ', true));
+        }
+    }
+    if (!color && canCastleQueensideBlack) {
+        if (getSquare("d8")->getPiece() == NULL && getSquare("c8")->getPiece() == NULL && getSquare("b8")->getPiece() == NULL) {
+            moves.push_back(Move('K', square, "c8", false, false, ' ', true));
         }
     }
     return moves;
@@ -370,19 +437,19 @@ vector<Move> Board::getMoves(string square) const {
             moves = getPawnMoves(square);
             break;
         case 'N':
-            moves = getKnightMoves(square);
+            moves = getNBRMoves(square, 'N');
             break;
         case 'B':
-            moves = getBishopMoves(square);
+            moves = getNBRMoves(square, 'B');
             break;
         case 'R':
-            moves = getRookMoves(square);
+            moves = getNBRMoves(square, 'R');
             break;
         case 'Q':
-            moves = getQueenMoves(square);
+            moves = getNBRMoves(square, 'Q');
             break;
         case 'K':
-            moves = getKingMoves(square);
+            moves = getNBRMoves(square, 'K');
             break;
     }
     // check if moves are legal

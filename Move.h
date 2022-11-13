@@ -14,14 +14,14 @@ class Move {
     int promotionType; // If a promotion, the type of piece to promote to
     bool castle; // Whether the move is a castle
     bool enPassant; // Whether the move is en passant!!
-    char disambiguation; // The file and/or rank of the piece being moved, if needed for disambiguation
+    std::string disambiguation; // The file and/or rank of the piece being moved, if needed for disambiguation
     bool check; // Whether the move is a check
     bool checkmate; // Whether the move is a checkmate
 public:
     /**
      * @brief If you can't figure out what these functions do why are you looking at this
      */
-    Move(char piece_, std::string from_, std::string to_, bool capture_ = false, bool promotion_ = false, int promotionType_ = 0, bool castle_ = false, bool enPassant_ = false, char disambiguation_ = '\0', bool check_ = false, bool checkmate_ = false) {
+    Move(char piece_, std::string from_, std::string to_, bool capture_ = false, bool promotion_ = false, int promotionType_ = 0, bool castle_ = false, bool enPassant_ = false) {
         piece = piece_;
         from = from_;
         to = to_;
@@ -30,9 +30,9 @@ public:
         promotionType = promotionType_;
         castle = castle_;
         enPassant = enPassant_;
-        check = check_;
-        checkmate = checkmate_;
-        disambiguation = disambiguation_;
+        check = false;
+        checkmate = false;
+        disambiguation = "";
     }
     char getPiece() const {
         return piece;
@@ -69,7 +69,7 @@ public:
         char y = to[1];
         return std::string(1, x) + std::string(1, y);
     }
-    char getDisambiguation() const {
+    std::string getDisambiguation() const {
         return disambiguation;
     }
 
@@ -82,7 +82,15 @@ public:
         check = true;
         checkmate = mate;
     }
-
+    /**
+     * @brief Set the disambiguation of the move
+     * 
+     * @param disambiguation_ The disambiguation
+     */
+    void setDisambiguation(std::string disambiguation_) {
+        disambiguation = disambiguation_;
+    }
+    
     /**
      * @brief Converts the move to a string
      * 

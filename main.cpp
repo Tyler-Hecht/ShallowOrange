@@ -8,5 +8,9 @@ int main() {
     board.setup();
     board.makeMove(Move('P', "e2", "e4"));
     board.print();
+    vector<Move> moves = board.getNBRMoves("b1", 'N');
+    for (Move move : moves) {
+        cout << move.toString() << endl;
+    }
     return 0;
 }

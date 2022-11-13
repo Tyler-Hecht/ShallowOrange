@@ -97,11 +97,9 @@ public:
     bool isLegal(Move move) const;
 
     std::vector<Move> getPawnMoves(std::string square) const;
-    std::vector<Move> getKnightMoves(std::string square) const {};
-    std::vector<Move> getRookMoves(std::string square) const {};
-    std::vector<Move> getBishopMoves(std::string square) const {};
-    std::vector<Move> getQueenMoves(std::string square) const {};
-    std::vector<Move> getKingMoves(std::string square) const {};
+    std::vector<Move> getNBRMoves(std::string square, char symbol) const;
+    std::vector<Move> getQueenMoves(std::string square) const;
+    std::vector<Move> getKingMoves(std::string square) const;
 
     /**
      * @brief Gets all the possible legal moves for a given square

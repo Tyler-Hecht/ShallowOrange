@@ -20,7 +20,7 @@ string Move::toString() const {
     }
     else {
         move += piece;
-        if (disambiguation != '\0') {
+        if (disambiguation != "") {
             move += disambiguation;
         }
     }
