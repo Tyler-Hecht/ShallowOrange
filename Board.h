@@ -136,6 +136,15 @@ public:
      * @return std::vector<Move> All the possible moves
      */
     std::vector<Move> getAllMoves() const;
+
+    /**
+     * @brief Reads in a move from a string (algabraic notation)
+     * Since en passant is always a brilliant move, it must end with "!!"
+     * 
+     * @param str The string to read the move from (algebraic notation)
+     * @return Move The move
+     */
+    Move readMove(std::string str) const;
 };
 
 /**

@@ -11,7 +11,7 @@ class Move {
     std::string to; // The square the piece is moving to
     bool capture; // Whether the move is a capture
     bool promotion; // Whether the move is a promotion
-    int promotionType; // If a promotion, the type of piece to promote to
+    char promotionType; // If a promotion, the type of piece to promote to
     bool castle; // Whether the move is a castle
     bool enPassant; // Whether the move is en passant!!
     std::string disambiguation; // The file and/or rank of the piece being moved, if needed for disambiguation
@@ -21,7 +21,8 @@ public:
     /**
      * @brief If you can't figure out what these functions do why are you looking at this
      */
-    Move(char piece_, std::string from_, std::string to_, bool capture_ = false, bool promotion_ = false, int promotionType_ = 0, bool castle_ = false, bool enPassant_ = false) {
+    Move() : piece('\0'), from(""), to(""), capture(false), promotion(false), promotionType('\0'), castle(false), enPassant(false), disambiguation(""), check(false), checkmate(false) {}
+    Move(char piece_, std::string from_, std::string to_, bool capture_ = false, bool promotion_ = false, char promotionType_ = '\0', bool castle_ = false, bool enPassant_ = false) {
         piece = piece_;
         from = from_;
         to = to_;
@@ -49,7 +50,7 @@ public:
     bool isPromotion() const {
         return promotion;
     }
-    int getPromotionType() const {
+    char getPromotionType() const {
         return promotionType;
     }
     bool isCastle() const {
@@ -92,9 +93,11 @@ public:
     }
     
     /**
-     * @brief Converts the move to a string
+     * @brief Converts the move to a string (algebraic notation)
      * 
      * @return std::string The move as a string
      */
     std::string toString() const;
 };
+
+std::ostream &operator<<(std::ostream &os, const Move &move);

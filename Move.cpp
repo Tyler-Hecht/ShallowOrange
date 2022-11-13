@@ -31,11 +31,12 @@ string Move::toString() const {
     if (promotion) {
         move += "=" + to_string(promotionType);
     }
-    if (check) {
-        move += "+";
-    }
     if (checkmate) {
         move += "#";
+    } else {
+        if (check) {
+            move += "+";
+        }
     }
     if (enPassant) {
         move += "!!";

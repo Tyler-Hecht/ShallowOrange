@@ -11,7 +11,7 @@ int main() {
     board.print();
     vector<Move> moves = board.getAllMoves();
     for (Move move : moves) {
-        cout << move.toString() << ", ";
+        cout << move << ", ";
     }
     return 0;
 }

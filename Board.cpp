@@ -512,3 +512,8 @@ vector<Move> Board::getAllMoves() const {
     }
     return moves;
 }
+
+Move Board::readMove(string str) const {
+    Move move;
+    return move;
+}
