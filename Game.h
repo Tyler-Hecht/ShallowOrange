@@ -53,8 +53,8 @@ public:
     /**
      * @brief Plays random moves until the game is over
      * 
-     * @param delay The delay between moves in milliseconds
      * @param print Whether to print the board and move after each move
+     * @param delay The delay between moves in milliseconds
      */
-    void playRandomGame(int delay = 0, bool print = true);
+    void playRandomGame(bool print = true, int delay = 0);
 };

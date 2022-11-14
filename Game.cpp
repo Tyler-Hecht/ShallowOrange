@@ -7,8 +7,11 @@ using namespace std;
 
 void Game::makeMove(Move move) {
     board->makeMove(move);
-    string FEN = board->writeFEN();
     moves.push_back(move.toString());
+    string FEN = board->writeFEN();
+    // get rid of the halfmove clock and fullmove number
+    FEN = FEN.substr(0, FEN.find_last_of(' '));
+    FEN = FEN.substr(0, FEN.find_last_of(' '));
     if (FENcounter.find(FEN) == FENcounter.end()) {
         FENcounter[FEN] = 1;
     } else {
@@ -73,7 +76,7 @@ string Game::getPGN() const {
     return PGN;
 }
 
-void Game::playRandomGame(int delay, bool print) {
+void Game::playRandomGame(bool print, int delay) {
     while (true) {
         vector<Move> moves = board->getAllMoves();
         if (result != 0) {
@@ -83,8 +86,10 @@ void Game::playRandomGame(int delay, bool print) {
         srand(time(NULL));
         Move move = moves[rand() % moves.size()];
         makeMove(move);
-        board->print();
-        cout << move << endl;
+        if (print) {
+            board->print();
+            cout << move << endl;
+        }
         this_thread::sleep_for(chrono::milliseconds(delay));
     }
 }
