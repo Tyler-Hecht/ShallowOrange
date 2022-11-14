@@ -9,6 +9,7 @@ class Piece {
     char symbol; // The symbol of the piece, 'P' for pawn
     bool color; //0 for black, 1 for white
 public:
+    Piece() : symbol('\0'), color(false) {}
     Piece(char symbol_, bool color_) : symbol(symbol_), color(color_) {}
     char getSymbol() const {
         return symbol;

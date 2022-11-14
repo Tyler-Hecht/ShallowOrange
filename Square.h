@@ -14,14 +14,28 @@ public:
         lit = false;
         piece = NULL;
     }
-    Square(const Square & square) {
-        lit = square.lit;
-        if (square.piece != NULL) {
-            piece = new Piece(*square.piece);
+    ~Square() {
+        if (piece != NULL) {
+            delete piece;
         }
-        else {
+    }
+    Square(const Square & other) {
+        lit = other.lit;
+        if (other.piece != NULL) {
+            piece = new Piece(*other.piece);
+        } else {
             piece = NULL;
         }
+    }
+    Square & operator=(const Square & other) {
+        lit = other.lit;
+        if (other.piece != NULL) {
+            delete piece;
+            piece = new Piece(*other.piece);
+        } else {
+            piece = NULL;
+        }
+        return *this;
     }
     void setPiece(Piece * piece_) {
         piece = piece_;

@@ -18,6 +18,14 @@ Board::Board() {
     }
 }
 
+Board::~Board() {
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            delete squares[i][j];
+        }
+    }
+}
+
 Board::Board(const Board & board) {
     turn = board.turn;
     enPassant = board.enPassant;
@@ -25,11 +33,33 @@ Board::Board(const Board & board) {
     canCastleQueensideWhite = board.canCastleQueensideWhite;
     canCastleKingsideBlack = board.canCastleKingsideBlack;
     canCastleQueensideBlack = board.canCastleQueensideBlack;
+    halfmoveClock = board.halfmoveClock;
+    fullmoveNumber = board.fullmoveNumber;
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
             squares[i][j] = new Square(*board.squares[i][j]);
         }
     }
+}
+
+Board & Board::operator=(const Board & other) {
+    if (this != &other) {
+        turn = other.turn;
+        enPassant = other.enPassant;
+        canCastleKingsideWhite = other.canCastleKingsideWhite;
+        canCastleQueensideWhite = other.canCastleQueensideWhite;
+        canCastleKingsideBlack = other.canCastleKingsideBlack;
+        canCastleQueensideBlack = other.canCastleQueensideBlack;
+        halfmoveClock = other.halfmoveClock;
+        fullmoveNumber = other.fullmoveNumber;
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                delete squares[i][j];
+                squares[i][j] = new Square(*other.squares[i][j]);
+            }
+        }
+    }
+    return *this;
 }
 
 void Board::setup() {

@@ -24,7 +24,9 @@ class Board {
     int fullmoveNumber;
 public:
     Board();
+    ~Board();
     Board(const Board & board);
+    Board & operator=(const Board & other);
     void setup();
     void print(bool withCoords = false) const;
     void light(std::string square, bool lit = true) {
