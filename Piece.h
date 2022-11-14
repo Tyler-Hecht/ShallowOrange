@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <iostream>
+#include <vector>
 
 /**
  * @brief A class representing a chess piece
@@ -20,6 +21,26 @@ public:
             symbol = symbol_;
         }
     }
+    /**
+     * @brief Gets the point value of the piece
+     * Pawn = 1, Knight = 3, Bishop = 3, Rook = 5, Queen = 9, King = 0
+     * 
+     * @return int The point value of the piece
+     */
+    int pointValue() const;
+    /**
+     * @brief Gets the adjustment to the point value of the piece based on its location
+     * 
+     * @param square The square the piece is on
+     * @return double The adjustment to be made
+     */
+    double locationAdjustment(std::string square) const;
+    /**
+     * @brief Gets a table of the piece's adjusted value based on its location
+     * 
+     * @return std::vector<std::vector<double>> The table
+     */
+    std::vector<std::vector<double>> getPieceTable() const;
 };
 
 /**

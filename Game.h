@@ -57,4 +57,12 @@ public:
      * @param delay The delay between moves in milliseconds
      */
     void playRandomGame(bool print = true, int delay = 0);
+
+    /**
+     * @brief Plays a game where each side tries to get the best position after one move (depth 1)
+     * 
+     * @param print Whether to print the board and move after each move
+     * @param delay The delay between moves in milliseconds
+     */
+    void playGreedyGame(bool print = true, int delay = 0);
 };

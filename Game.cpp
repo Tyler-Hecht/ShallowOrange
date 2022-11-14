@@ -93,3 +93,19 @@ void Game::playRandomGame(bool print, int delay) {
         this_thread::sleep_for(chrono::milliseconds(delay));
     }
 }
+
+void Game::playGreedyGame(bool print, int delay) {
+    while (true) {
+        if (result != 0) {
+            cout << getResult() << endl;
+            break;
+        }
+        Move move = board->getBestMove();
+        makeMove(move);
+        if (print) {
+            board->print();
+            cout << move << endl;
+        }
+        this_thread::sleep_for(chrono::milliseconds(delay));
+    }
+}

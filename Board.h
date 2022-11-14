@@ -196,6 +196,30 @@ public:
      * @return Whether there is insufficient material
      */
     bool insufficientMaterial() const;
+
+    /**
+     * @brief Evaluates the position somehow
+     * 
+     * @param depth The depth to search to
+     * @return double The evaluation; positive is good for white, negative is good for black
+     */
+    double evaluate() const;
+    /**
+     * @brief Gets the best move for the current position
+     * Only uses a depth of 1
+     * 
+     * @return Move The best move
+     */
+    Move getBestMove() const;
+private:
+    // these are used for the eval
+    /**
+     * @brief Adjusts the material value of a piece based on its location on the board
+     * 
+     * @param square The square the piece is on
+     * @return double The adjustment to be made
+     */
+    double pieceLocationAdjustment(std::string square) const;
 };
 
 /**
