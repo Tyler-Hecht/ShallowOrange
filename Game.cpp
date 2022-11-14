@@ -28,7 +28,7 @@ void Game::makeMove(Move move) {
     }
     if (board->getAllMoves().size() == 0) {
         if (board->inCheckmate(board->getTurn(), board->findKing(board->getTurn()))) {
-            result = board->getTurn() == 1 ? 2 : 1;
+            result = board->getTurn() ? 2 : 1;
         } else {
             result = 3;
         }

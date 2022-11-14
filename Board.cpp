@@ -537,38 +537,43 @@ vector<Move> Board::getAllMoves() const {
     }
     // handle disambiguation
     for (int i = 0; i < moves.size(); i++) {
-        vector<Move> disamb = {moves[i]};
+        // this will hold the indices in moves that need disambiguation
+        vector<int> disamb = {i};
+        // find all moves with the same destination
         for (int j = i + 1; j < moves.size(); j++) {
             if (moves[i].getTo() == moves[j].getTo() && moves[i].getPiece() == moves[j].getPiece()) {
-                disamb.push_back(moves[j]);
+                disamb.push_back(j);
             }
         }
         if (disamb.size() > 1) {
             bool differentFiles = true;
             bool differentRanks = true;
+            // check if any moves have the same file or rank
             for (int j = 0; j < disamb.size(); j++) {
                 for (int k = j + 1; k < disamb.size(); k++) {
-                    if (disamb[j].getFrom()[0] == disamb[k].getFrom()[0]) {
+                    if (moves[disamb[j]].getFrom()[0] == moves[disamb[k]].getFrom()[0]) {
                         differentFiles = false;
                     }
-                    if (disamb[j].getFrom()[1] == disamb[k].getFrom()[1]) {
+                    if (moves[disamb[j]].getFrom()[1] == moves[disamb[k]].getFrom()[1]) {
                         differentRanks = false;
                     }
                 }
             }
+            // disambiguate
             for (int j = 0; j < disamb.size(); j++) {
-                if (differentFiles && !differentRanks) {
-                    disamb[j].setDisambiguation(to_string(disamb[j].getFrom()[0]));
+                if (differentFiles && !differentRanks || differentFiles && differentRanks) {
+                    moves[disamb[j]].setDisambiguation(string(1, moves[disamb[j]].getFrom()[0]));
                 }
-                if (!differentFiles && differentRanks) {
-                    disamb[j].setDisambiguation(to_string(disamb[j].getFrom()[1]));
-                }
-                if (differentFiles && differentRanks) {
-                    disamb[j].setDisambiguation(disamb[j].getFrom());
+                else if (!differentFiles && differentRanks) {
+                    moves[disamb[j]].setDisambiguation(string(1, moves[disamb[j]].getFrom()[1]));
+                } else {
+                    moves[disamb[j]].setDisambiguation(moves[disamb[j]].getFrom());
                 }
             }
         }
+
     }
+    
     // handle en passant
     vector<Move> trueMoves;
     for (Move move : moves) {
