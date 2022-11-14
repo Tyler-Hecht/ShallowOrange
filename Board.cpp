@@ -545,6 +545,16 @@ vector<Move> Board::getAllMoves() const {
             }
         }
     }
+    // handle en passant
+    vector<Move> trueMoves;
+    for (Move move : moves) {
+        if (move.isEnPassant()) {
+            trueMoves.push_back(move);
+        }
+    }
+    if (trueMoves.size() > 0) {
+        return trueMoves;
+    }
     return moves;
 }
 
@@ -670,4 +680,71 @@ string Board::writeFEN() const {
     fen += ' ';
     fen += to_string(fullmoveNumber);
     return fen;
+}
+
+bool Board::insufficientMaterial() const {
+    int numPawns = 0;
+    int numRooks = 0;
+    int numQueens = 0;
+    int numWhiteBishops = 0;
+    int numBlackBishops = 0;
+    int numWhiteKnights = 0;
+    int numBlackKnights = 0;
+    bool whiteBishopOnLight = false;
+    bool whiteBishopOnDark = false;
+    bool blackBishopOnLight = false;
+    bool blackBishopOnDark = false;
+    for (int file = 0; file < 8; file++) {
+        for (int rank = 0; rank < 8; rank++) {
+            if (squares[file][rank]->getPiece() != NULL) {
+                if (squares[file][rank]->getPiece()->getSymbol() == 'P') {
+                    numPawns++;
+                } else if (squares[file][rank]->getPiece()->getSymbol() == 'R') {
+                    numRooks++;
+                } else if (squares[file][rank]->getPiece()->getSymbol() == 'Q') {
+                    numQueens++;
+                } else if (squares[file][rank]->getPiece()->getSymbol() == 'B') {
+                    if (squares[file][rank]->getPiece()->getColor()) {
+                        numWhiteBishops++;
+                        if ((file + rank) % 2 == 0) {
+                            whiteBishopOnLight = true;
+                        } else {
+                            whiteBishopOnDark = true;
+                        }
+                    } else {
+                        numBlackBishops++;
+                        if ((file + rank) % 2 == 0) {
+                            blackBishopOnLight = true;
+                        } else {
+                            blackBishopOnDark = true;
+                        }
+                    }
+                } else if (squares[file][rank]->getPiece()->getSymbol() == 'N') {
+                    if (squares[file][rank]->getPiece()->getColor()) {
+                        numWhiteKnights++;
+                    } else {
+                        numBlackKnights++;
+                    }
+                }
+            }
+        }
+    }
+    // there's enough material for a checkmate
+    if (numPawns > 0 || numRooks > 0 || numQueens > 0) {
+        return false;
+    }
+    // king vs king and one minor piece
+    if (numWhiteBishops + numWhiteKnights + numBlackBishops + numBlackKnights <= 1) {
+        return true;
+    }
+    // two bishops of the same color is insufficient material
+    if (numWhiteBishops == 1 && numBlackBishops == 1) {
+        if (whiteBishopOnLight && blackBishopOnLight) {
+            return true;
+        }
+        if (whiteBishopOnDark && blackBishopOnDark) {
+            return true;
+        }
+    }
+    return false;
 }

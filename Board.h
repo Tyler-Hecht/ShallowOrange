@@ -51,6 +51,31 @@ public:
     }
 
     /**
+     * @brief Gets the current turn
+     * 
+     * @return The current turn: 1 for white, 0 for black
+     */
+    bool getTurn() const {
+        return turn;
+    }
+    /**
+     * @brief Gets the halfmove clock
+     * 
+     * @return int The halfmove clock
+     */
+    int getHalfmoveClock() const {
+        return halfmoveClock;
+    }
+    /**
+     * @brief Gets the fullmove number
+     * 
+     * @return int The fullmove number
+     */
+    int getFullmoveNumber() const {
+        return fullmoveNumber;
+    }
+
+    /**
      * @brief Finds all the squares that a knight can move to from a given square
      * 
      * @param square The starting square of the knight
@@ -164,6 +189,13 @@ public:
      * @return std::string The FEN
      */
     std::string writeFEN() const;
+
+    /**
+     * @brief Determines if there is insufficient material for checkmate
+     * 
+     * @return Whether there is insufficient material
+     */
+    bool insufficientMaterial() const;
 };
 
 /**
