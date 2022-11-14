@@ -142,6 +142,30 @@ void Board::makeMove(Move move) {
             canCastleQueensideBlack = false;
         }
     }
+    if (turn && move.getPiece() == 'K') {
+        canCastleKingsideWhite = false;
+        canCastleQueensideWhite = false;
+    }
+    else if (turn && move.getPiece() == 'R') {
+        if (move.getFrom() == "a1") {
+            canCastleQueensideWhite = false;
+        }
+        else if (move.getFrom() == "h1") {
+            canCastleKingsideWhite = false;
+        }
+    }
+    else if (!turn && move.getPiece() == 'K') {
+        canCastleKingsideBlack = false;
+        canCastleQueensideBlack = false;
+    }
+    else if (!turn && move.getPiece() == 'R') {
+        if (move.getFrom() == "a8") {
+            canCastleQueensideBlack = false;
+        }
+        else if (move.getFrom() == "h8") {
+            canCastleKingsideBlack = false;
+        }
+    }
     // handles en passant
     if (move.isEnPassant()) {
         string captureSquare = move.enPassantSquare();
