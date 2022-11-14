@@ -465,7 +465,8 @@ vector<Move> Board::getMoves(string square) const {
         Board * tmp = new Board(*this);
         tmp->makeMove(legalMoves[i]);
         if (tmp->inCheck(tmp->turn, tmp->findKing(tmp->turn))) {
-            legalMoves[i].makeCheck(tmp->inCheckmate(!turn, tmp->findKing(!turn)));
+            legalMoves[i].setCheck(true);
+            legalMoves[i].setCheckmate(tmp->inCheckmate(!turn, tmp->findKing(!turn)));
         }
         delete tmp;
     }
@@ -517,9 +518,17 @@ vector<Move> Board::getAllMoves() const {
     return moves;
 }
 
-Move Board::readMove(string str) const {
-    Move move;
-    return move;
+bool Board::readMove(string str, Move & move) const {
+    vector<Move> moves = getAllMoves();
+    cout << "Possible moves:" << endl;
+    for (Move move_ : moves) {
+        if (move_.toString() == str) {
+            cout << "found" << endl;
+            move = move_;
+            return true;
+        }
+    }
+    return false;
 }
 
 void Board::readFEN(string fen) {

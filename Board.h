@@ -146,11 +146,21 @@ public:
      * Since en passant is always a brilliant move, it must end with "!!"
      * 
      * @param str The string to read the move from (algebraic notation)
-     * @return Move The move
+     * @param Move The move to read the string into
+     * @return bool Whether the move exists in the current position
      */
-    Move readMove(std::string str) const;
-
+    bool readMove(std::string str, Move & move) const;
+    /**
+     * @brief Reads in a position from an Forsyth-Edwards Notation (FEN) string
+     * 
+     * @param fen The FEN
+     */
     void readFEN(std::string fen);
+    /**
+     * @brief Gets the Forsyth-Edwards Notation (FEN) of the current position
+     * 
+     * @return std::string The FEN
+     */
     std::string writeFEN() const;
 };
 

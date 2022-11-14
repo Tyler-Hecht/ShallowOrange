@@ -7,8 +7,26 @@ using namespace std;
 
 int main() {
     Board board;
-    board.readFEN("5r2/4n2k/Brp5/pP2p1pN/P3P3/K4P1P/2PB3Q/3r2R1 w - - 0 1");
+    board.setup();
     board.print();
+    while (true) {
+        cout << "Enter a move: ";
+        Move move;
+        string str;
+        cin >> str;
+        while (!board.readMove(str, move)) {
+            cout << "Invalid move. Try again: ";
+            cin >> str;
+        }
+        cout << "making move" << endl;
+        board.makeMove(move);
+        board.print();
+        if (board.getAllMoves().size() == 0) {
+            cout << "Checkmate!" << endl;
+            break;
+        }
+    }
+    /*
     while (true) {
         vector<Move> moves = board.getAllMoves();
         cout << "Possible moves: " << moves.size() << endl;
@@ -19,5 +37,6 @@ int main() {
         board.makeMove(moves[rand() % moves.size()]);
         board.print();
     }
+    */
     return 0;
 }

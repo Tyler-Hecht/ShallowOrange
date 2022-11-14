@@ -74,20 +74,36 @@ public:
         return disambiguation;
     }
 
-    /**
-     * @brief Makes the move a check or checkmate
-     * 
-     * @param mate Whether the move is checkmate
-     */
-    void makeCheck(bool mate) {
-        check = true;
-        checkmate = mate;
+    void setPiece(char piece_) {
+        piece = piece_;
     }
-    /**
-     * @brief Set the disambiguation of the move
-     * 
-     * @param disambiguation_ The disambiguation
-     */
+    void setFrom(std::string from_) {
+        from = from_;
+    }
+    void setTo(std::string to_) {
+        to = to_;
+    }
+    void setCapture(bool capture_) {
+        capture = capture_;
+    }
+    void setPromotion(bool promotion_) {
+        promotion = promotion_;
+    }
+    void setPromotionType(char promotionType_) {
+        promotionType = promotionType_;
+    }
+    void setCastle(bool castle_) {
+        castle = castle_;
+    }
+    void setEnPassant(bool enPassant_) {
+        enPassant = enPassant_;
+    }
+    void setCheck(bool check_) {
+        check = check_;
+    }
+    void setCheckmate(bool checkmate_) {
+        checkmate = checkmate_;
+    }
     void setDisambiguation(std::string disambiguation_) {
         disambiguation = disambiguation_;
     }
