@@ -50,12 +50,21 @@ public:
      * @return std::string The PGN of the game
      */
     std::string getPGN() const;
+
+    /**
+     * @brief Gets the best move for the current position
+     * Only uses a depth of 1
+     * 
+     * @return Move The best move
+     */
+    Move getBestMove() const;
     /**
      * @brief Plays random moves until the game is over
      * 
      * @param print Whether to print the board and move after each move
      * @param delay The delay between moves in milliseconds
      */
+    
     void playRandomGame(bool print = true, int delay = 0);
 
     /**

@@ -665,7 +665,7 @@ void Board::readFEN(string fen) {
     fullmoveNumber = stoi(fullmove);
 }
 
-string Board::writeFEN() const {
+string Board::writeFEN(bool full) const {
     string fen = "";
     for (int rank = 7; rank >= 0; rank--) {
         int empty = 0;
@@ -677,13 +677,21 @@ string Board::writeFEN() const {
                     fen += to_string(empty);
                     empty = 0;
                 }
-                fen += squares[file][rank]->getPiece()->getSymbol();
+                Piece * piece = squares[file][rank]->getPiece();
+                fen += piece->getColor() ? piece->getSymbol() : tolower(piece->getSymbol());
             }
         }
         if (rank != 0) {
+            if (empty > 0) {
+                fen += to_string(empty);
+            }
             fen += '/';
         }
+        if (rank == 0 && empty > 0) {
+            fen += to_string(empty);
+        }
     }
+
     fen += ' ';
     fen += (turn) ? 'w' : 'b';
     fen += ' ';
@@ -704,10 +712,12 @@ string Board::writeFEN() const {
     }
     fen += ' ';
     fen += (enPassant == "") ? "-" : enPassant;
-    fen += ' ';
-    fen += to_string(halfmoveClock);
-    fen += ' ';
-    fen += to_string(fullmoveNumber);
+    if (full) {
+        fen += ' ';
+        fen += to_string(halfmoveClock);
+        fen += ' ';
+        fen += to_string(fullmoveNumber);
+    }
     return fen;
 }
 

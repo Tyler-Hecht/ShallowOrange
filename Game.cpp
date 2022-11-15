@@ -8,10 +8,7 @@ using namespace std;
 void Game::makeMove(Move move) {
     board->makeMove(move);
     moves.push_back(move.toString());
-    string FEN = board->writeFEN();
-    // get rid of the halfmove clock and fullmove number
-    FEN = FEN.substr(0, FEN.find_last_of(' '));
-    FEN = FEN.substr(0, FEN.find_last_of(' '));
+    string FEN = board->writeFEN(false);
     if (FENcounter.find(FEN) == FENcounter.end()) {
         FENcounter[FEN] = 1;
     } else {
@@ -76,6 +73,53 @@ string Game::getPGN() const {
     return PGN;
 }
 
+Move Game::getBestMove() const {
+    vector<Move> moves = board->getAllMoves();
+    if (moves.size() == 0) {
+        return Move();
+    }
+    Board * tmp;
+    Move bestMove;
+    double bestEval = board->getTurn() ? -10000 : 10000;
+    for (int i = 0; i < moves.size(); i++) {
+        Move move = moves[i];
+        tmp = new Board(*board);
+        tmp->makeMove(move);
+        double eval;
+        // if checkmate set eval to 10000 or -10000
+        if (tmp->inCheckmate(true, tmp->findKing(true))) {
+            eval = -10000;
+        } else if (tmp->inCheckmate(false, tmp->findKing(false))) {
+            eval = 10000;
+        }
+        // if draw set eval to 0
+        else if (tmp->getAllMoves().size() == 0) {
+            eval = 0;
+        } else if (tmp->insufficientMaterial()) {
+            eval = 0;
+        } else if (tmp->getHalfmoveClock() == 100) {
+            eval = 0;
+        } else if (FENcounter.find(tmp->writeFEN(false)) != FENcounter.end() && FENcounter.at(tmp->writeFEN(false)) == 2) {
+            eval = 0;
+        } else {
+            eval = tmp->evaluate();
+        }
+        if (board->getTurn()) {
+                if (eval > bestEval) {
+                    bestEval = eval;
+                    bestMove = move;
+                }
+        } else {
+            if (eval < bestEval) {
+                bestEval = eval;
+                bestMove = move;
+            }
+        }
+        delete tmp;
+    }
+    return bestMove;
+}
+
 void Game::playRandomGame(bool print, int delay) {
     while (true) {
         vector<Move> moves = board->getAllMoves();
@@ -100,7 +144,7 @@ void Game::playGreedyGame(bool print, int delay) {
             cout << getResult() << endl;
             break;
         }
-        Move move = board->getBestMove();
+        Move move = getBestMove();
         makeMove(move);
         if (print) {
             board->print();

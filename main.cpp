@@ -5,6 +5,6 @@ using namespace std;
 
 int main() {
     Game game;
-    game.playGreedyGame();
+    game.playGreedyGame(false);
     cout << game.getPGN() << endl;
 }

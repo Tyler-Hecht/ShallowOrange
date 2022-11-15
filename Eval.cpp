@@ -1,33 +1,7 @@
 #include "Board.h"
+#include <map>
 
 using namespace std;
-
-Move Board::getBestMove() const {
-    vector<Move> moves = getAllMoves();
-    if (moves.size() == 0) {
-        return Move();
-    }
-    Board * tmp;
-    Move bestMove;
-    double bestEval = turn ? -10000 : 10000;
-    for (int i = 0; i < moves.size(); i++) {
-        tmp = new Board(*this);
-        tmp->makeMove(moves[i]);
-        double eval = tmp->evaluate();
-        if (turn) {
-            if (eval > bestEval) {
-                bestEval = eval;
-                bestMove = moves[i];
-            }
-        } else {
-            if (eval < bestEval) {
-                bestEval = eval;
-                bestMove = moves[i];
-            }
-        }
-    }
-    return bestMove;
-}
 
 double Board::evaluate() const {
     double whiteMaterial = 0;

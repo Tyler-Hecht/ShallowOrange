@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <map>
 #include "Square.h"
 #include "Move.h"
 
@@ -186,9 +187,10 @@ public:
     /**
      * @brief Gets the Forsyth-Edwards Notation (FEN) of the current position
      * 
+     * @param full Whether to include the halfmove clock and fullmove number
      * @return std::string The FEN
      */
-    std::string writeFEN() const;
+    std::string writeFEN(bool full = true) const;
 
     /**
      * @brief Determines if there is insufficient material for checkmate
@@ -197,20 +199,7 @@ public:
      */
     bool insufficientMaterial() const;
 
-    /**
-     * @brief Evaluates the position somehow
-     * 
-     * @param depth The depth to search to
-     * @return double The evaluation; positive is good for white, negative is good for black
-     */
     double evaluate() const;
-    /**
-     * @brief Gets the best move for the current position
-     * Only uses a depth of 1
-     * 
-     * @return Move The best move
-     */
-    Move getBestMove() const;
 private:
     // these are used for the eval
     /**
