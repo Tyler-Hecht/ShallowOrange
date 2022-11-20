@@ -49,7 +49,7 @@ string Game::getPGN() const {
     return PGN;
 }
 
-Move Game::getBestMove() const {
+Move Game::getBestMove() {
     vector<Move> moves = board->getAllMoves();
     if (moves.size() == 0) {
         return Move();
@@ -58,22 +58,29 @@ Move Game::getBestMove() const {
     Move bestMove;
     double bestEval = board->getTurn() ? -10000 : 10000;
     for (int i = 0; i < moves.size(); i++) {
+        // evaluate the move
         Move move = moves[i];
         tmp = new Board(*board);
         tmp->makeMove(move);
         double eval;
-        // if checkmate set eval to 10000 or -10000
-        int result = tmp->getResult();
-        if (result == 1) {
-            eval = 10000;
-        } else if (result == 2) {
-            eval = -10000;
-        }
-        // if draw set eval to 0
-        else if (result == 3 || result == 4 || result == 5 || result == 6) {
-            eval = 0;
+        string fen = tmp->writeFEN();
+        if (evals.find(fen) != evals.end()) {
+            eval = evals[fen];
         } else {
-            eval = tmp->evaluate();
+            // if checkmate set eval to 10000 or -10000
+            int result = tmp->getResult();
+            if (result == 1) {
+                eval = 10000;
+            } else if (result == 2) {
+                eval = -10000;
+            }
+            // if draw set eval to 0
+            else if (result == 3 || result == 4 || result == 5 || result == 6) {
+                eval = 0;
+            } else {
+                eval = tmp->evaluate();
+            }
+            evals[fen] = eval;
         }
         if (board->getTurn()) {
             if (eval > bestEval) {

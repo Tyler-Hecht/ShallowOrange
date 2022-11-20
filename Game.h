@@ -11,6 +11,7 @@ class Game {
 private:
     Board * board;
     std::vector<std::string> moves;
+    std::map<std::string, double> evals; // stores evals so they can be determined faster later
 public:
     Game() {
         board = new Board();
@@ -21,10 +22,14 @@ public:
     }
     Game(const Game & other) {
         board = new Board(*other.board);
+        moves = other.moves;
+        evals = other.evals;
     }
     Game & operator=(const Game & other) {
         delete board;
         board = new Board(*other.board);
+        moves = other.moves;
+        evals = other.evals;
         return *this;
     }
     
@@ -50,10 +55,11 @@ public:
     /**
      * @brief Gets the best move for the current position
      * Only uses a depth of 1
+     * Also updates the evals map
      * 
      * @return Move The best move
      */
-    Move getBestMove() const;
+    Move getBestMove();
     /**
      * @brief Plays random moves until the game is over
      * 
