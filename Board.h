@@ -23,6 +23,8 @@ class Board {
     bool canCastleQueensideBlack;
     int halfmoveClock;
     int fullmoveNumber;
+    std::map<std::string, int> FENcounter;
+    int result; // see getResult() for more info
 public:
     Board();
     ~Board();
@@ -115,8 +117,8 @@ public:
      * @param kingSquare The square the king is on
      * @return bool Whether the king is in checkmate
      */
-    bool inCheckmate(bool color, std::string kingSquare) const {
-        return inCheck(color, kingSquare) && getAllMoves().size() == 0;
+    bool inCheckmate(bool color) const {
+        return inCheck(color, findKing(color)) && getAllMoves().size() == 0;
     }
     /**
      * @brief Determines if a given move is legal
@@ -199,6 +201,35 @@ public:
      */
     bool insufficientMaterial() const;
 
+    /**
+     * @brief Determines if a position has been repeated a certain number of times or more
+     * 
+     * @param amount The number of times the position was repeated
+     * @return bool Whether the position has been repeated the given number of times
+     */
+    bool repetition(int amount) const {
+        for (auto it = FENcounter.begin(); it != FENcounter.end(); it++) {
+            if (it->second >= amount) {
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
+     * @brief Gets the result of the position
+     * 0 = in progress, 1 = white wins, 2 = black wins, 3 = draw by stalemate,
+     * 4 = draw by insufficient material, 5 = draw by 50 move rule,
+     * 6 = draw by threefold repetition
+     * 
+     * @return int The result of the position
+     */
+    int getResult() const;
+
+    /**
+     * @brief Evaluates the position (no depth)
+     * 
+     * @return double The evaluation of the position
+     */
     double evaluate() const;
 private:
     // these are used for the eval

@@ -10,11 +10,9 @@
 class Game {
 private:
     Board * board;
-    std::map<std::string, int> FENcounter;
-    int result; // 0 = in progress, 1 = white wins, 2 = black wins, 3 = draw by stalemate, 4 = draw by insufficient material, 5 = draw by 50 move rule, 6 = draw by threefold repetition
     std::vector<std::string> moves;
 public:
-    Game() : result(0) {
+    Game() {
         board = new Board();
         board->setup();
     }
@@ -23,12 +21,10 @@ public:
     }
     Game(const Game & other) {
         board = new Board(*other.board);
-        result = other.result;
     }
     Game & operator=(const Game & other) {
         delete board;
         board = new Board(*other.board);
-        result = other.result;
         return *this;
     }
     

@@ -16,6 +16,7 @@ Board::Board() {
             squares[i][j] = new Square();
         }
     }
+    result = 0;
 }
 
 Board::~Board() {
@@ -40,6 +41,8 @@ Board::Board(const Board & board) {
             squares[i][j] = new Square(*board.squares[i][j]);
         }
     }
+    FENcounter = board.FENcounter;
+    result = board.result;
 }
 
 Board & Board::operator=(const Board & other) {
@@ -58,6 +61,8 @@ Board & Board::operator=(const Board & other) {
                 squares[i][j] = new Square(*other.squares[i][j]);
             }
         }
+        FENcounter = other.FENcounter;
+        result = other.result;
     }
     return *this;
 }
@@ -193,6 +198,12 @@ void Board::makeMove(Move move) {
     }
     if (!turn) {
         fullmoveNumber++;
+    }
+    string FEN = writeFEN(false);
+    if (FENcounter.find(FEN) != FENcounter.end()) {
+        FENcounter[FEN]++;
+    } else {
+        FENcounter[FEN] = 1;
     }
 }
 
@@ -520,7 +531,7 @@ vector<Move> Board::getMoves(string square) const {
         tmp->makeMove(legalMoves[i]);
         if (tmp->inCheck(tmp->turn, tmp->findKing(tmp->turn))) {
             legalMoves[i].setCheck(true);
-            legalMoves[i].setCheckmate(tmp->inCheckmate(!turn, tmp->findKing(!turn)));
+            legalMoves[i].setCheckmate(tmp->inCheckmate(!turn));
         }
         delete tmp;
     }
@@ -663,6 +674,7 @@ void Board::readFEN(string fen) {
         i++;
     }
     fullmoveNumber = stoi(fullmove);
+    FENcounter[fen] = 1;
 }
 
 string Board::writeFEN(bool full) const {
@@ -786,4 +798,24 @@ bool Board::insufficientMaterial() const {
         }
     }
     return false;
+}
+
+int Board::getResult() const {
+    if (getAllMoves().size() == 0) {
+        if (inCheckmate(true)) {
+            return 2;
+        } else if (inCheckmate(false)) {
+            return 1;
+        } else {
+            return 3;
+        }
+    } else if (insufficientMaterial()) {
+        return 4;
+    } else if (halfmoveClock >= 100) {
+        return 5;
+    } else if (repetition(3)) {
+        return 6;
+    } else {
+        return 0;
+    }
 }

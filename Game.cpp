@@ -8,35 +8,10 @@ using namespace std;
 void Game::makeMove(Move move) {
     board->makeMove(move);
     moves.push_back(move.toString());
-    string FEN = board->writeFEN(false);
-    if (FENcounter.find(FEN) == FENcounter.end()) {
-        FENcounter[FEN] = 1;
-    } else {
-        FENcounter[FEN]++;
-    }
-    if (FENcounter[FEN] == 3) {
-        result = 6;
-        return;
-    }
-    if (board->getHalfmoveClock() == 100) {
-        result = 5;
-        return;
-    }
-    if (board->insufficientMaterial()) {
-        result = 4;
-        return;
-    }
-    if (board->getAllMoves().size() == 0) {
-        if (board->inCheckmate(board->getTurn(), board->findKing(board->getTurn()))) {
-            result = board->getTurn() ? 2 : 1;
-        } else {
-            result = 3;
-        }
-    }
 }
 
 string Game::getResult() const {
-    switch (result) {
+    switch (board->getResult()) {
         case 0:
             return "Game in progress";
         case 1:
@@ -63,6 +38,7 @@ string Game::getPGN() const {
         }
         PGN += moves[i] + " ";
     }
+    int result = board->getResult();
     if (result == 1) {
         PGN += "1-0";
     } else if (result == 2) {
@@ -87,28 +63,23 @@ Move Game::getBestMove() const {
         tmp->makeMove(move);
         double eval;
         // if checkmate set eval to 10000 or -10000
-        if (tmp->inCheckmate(true, tmp->findKing(true))) {
-            eval = -10000;
-        } else if (tmp->inCheckmate(false, tmp->findKing(false))) {
+        int result = tmp->getResult();
+        if (result == 1) {
             eval = 10000;
+        } else if (result == 2) {
+            eval = -10000;
         }
         // if draw set eval to 0
-        else if (tmp->getAllMoves().size() == 0) {
-            eval = 0;
-        } else if (tmp->insufficientMaterial()) {
-            eval = 0;
-        } else if (tmp->getHalfmoveClock() == 100) {
-            eval = 0;
-        } else if (FENcounter.find(tmp->writeFEN(false)) != FENcounter.end() && FENcounter.at(tmp->writeFEN(false)) == 2) {
+        else if (result == 3 || result == 4 || result == 5 || result == 6) {
             eval = 0;
         } else {
             eval = tmp->evaluate();
         }
         if (board->getTurn()) {
-                if (eval > bestEval) {
-                    bestEval = eval;
-                    bestMove = move;
-                }
+            if (eval > bestEval) {
+                bestEval = eval;
+                bestMove = move;
+            }
         } else {
             if (eval < bestEval) {
                 bestEval = eval;
@@ -123,7 +94,7 @@ Move Game::getBestMove() const {
 void Game::playRandomGame(bool print, int delay) {
     while (true) {
         vector<Move> moves = board->getAllMoves();
-        if (result != 0) {
+        if (board->getResult() != 0) {
             cout << getResult() << endl;
             break;
         }
@@ -140,7 +111,7 @@ void Game::playRandomGame(bool print, int delay) {
 
 void Game::playGreedyGame(bool print, int delay) {
     while (true) {
-        if (result != 0) {
+        if (board->getResult() != 0) {
             cout << getResult() << endl;
             break;
         }
