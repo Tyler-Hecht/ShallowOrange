@@ -56,7 +56,7 @@ Move Game::getBestMove() {
     }
     Board * tmp;
     Move bestMove;
-    double bestEval = board->getTurn() ? -10000 : 10000;
+    double bestEval = board->getTurn() ? -numeric_limits<double>::infinity() : numeric_limits<double>::infinity();
     for (int i = 0; i < moves.size(); i++) {
         // evaluate the move
         Move move = moves[i];
@@ -68,7 +68,7 @@ Move Game::getBestMove() {
             eval = (*evals)[fen];
         } else {
             // if checkmate set eval to 10000 or -10000
-            int result = tmp->getResult();
+            int result = tmp->getResult(allMoves);
             if (result == 1) {
                 eval = 10000;
             } else if (result == 2) {

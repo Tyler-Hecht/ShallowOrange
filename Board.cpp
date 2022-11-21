@@ -798,11 +798,17 @@ bool Board::insufficientMaterial() const {
     return false;
 }
 
-int Board::getResult() const {
-    if (getAllMoves().size() == 0) {
-        if (inCheckmate(true)) {
+int Board::getResult(std::map<std::string, std::vector<Move>> * allMovesMap) const {
+    vector<Move> allMoves;
+    if (allMovesMap == NULL) {
+        allMoves = getAllMoves();
+    } else {
+        allMoves = (*allMovesMap)[writeFEN()];
+    }
+    if (allMoves.size() == 0) {
+        if (inCheckmate(true, allMoves)) {
             return 2;
-        } else if (inCheckmate(false)) {
+        } else if (inCheckmate(false, allMoves)) {
             return 1;
         } else {
             return 3;

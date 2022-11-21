@@ -114,11 +114,14 @@ public:
      * @brief Determines if a king is in checkmate
      * 
      * @param color The color of the king
-     * @param kingSquare The square the king is on
+     * @param allMoves All possible moves for the color
      * @return bool Whether the king is in checkmate
      */
-    bool inCheckmate(bool color) const {
-        return inCheck(color, findKing(color)) && getAllMoves().size() == 0;
+    bool inCheckmate(bool color, std::vector<Move> allMoves = std::vector<Move>()) const {
+        if (allMoves.empty()) {
+            allMoves = getAllMoves();
+        }
+        return inCheck(color, findKing(color)) && allMoves.empty();
     }
     /**
      * @brief Determines if a given move is legal
@@ -221,9 +224,10 @@ public:
      * 4 = draw by insufficient material, 5 = draw by 50 move rule,
      * 6 = draw by threefold repetition
      * 
+     * @param allMoves_ All possible moves for the current turn
      * @return int The result of the position
      */
-    int getResult() const;
+    int getResult(std::map<std::string, std::vector<Move>> * allMovesMap = NULL) const;
 
     /**
      * @brief Evaluates the position (no depth)
