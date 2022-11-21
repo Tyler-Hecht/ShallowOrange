@@ -64,8 +64,8 @@ Move Game::getBestMove() {
         tmp->makeMove(move);
         double eval;
         string fen = tmp->writeFEN();
-        if (evals.find(fen) != evals.end()) {
-            eval = evals[fen];
+        if (evals->find(fen) != evals->end()) {
+            eval = (*evals)[fen];
         } else {
             // if checkmate set eval to 10000 or -10000
             int result = tmp->getResult();
@@ -80,7 +80,7 @@ Move Game::getBestMove() {
             } else {
                 eval = tmp->evaluate();
             }
-            evals[fen] = eval;
+            (*evals)[fen] = eval;
         }
         double adjustment = (rand() % 2) - 1;
         eval += adjustment * randomness;

@@ -1,5 +1,6 @@
 #pragma once
 #include "Board.h"
+#include "MoveTree.h"
 #include <map>
 #include <vector>
 #include <string>
@@ -12,18 +13,20 @@ private:
     Board * board;
     double randomness; // alters the evaluation function by up to this amount in either direction randomly
     std::vector<std::string> moves;
-    std::map<std::string, double> evals; // stores evals so they can be determined faster later
+    std::map<std::string, double> * evals; // stores evals so they can be determined faster later
 public:
     Game() {
         board = new Board();
         board->setup();
         randomness = 0;
+        evals = new std::map<std::string, double>();
     }
     Game(double randomness) {
         std::srand(time(NULL));
         board = new Board();
         board->setup();
         this->randomness = randomness;
+        evals = new std::map<std::string, double>();
     }
     ~Game() {
         delete board;
@@ -31,15 +34,14 @@ public:
     Game(const Game & other) {
         board = new Board(*other.board);
         moves = other.moves;
-        evals = other.evals;
-        randomness = other.randomness;
+        evals = new std::map<std::string, double>(*other.evals);
     }
     Game & operator=(const Game & other) {
         delete board;
         board = new Board(*other.board);
         moves = other.moves;
-        evals = other.evals;
         randomness = other.randomness;
+        evals = new std::map<std::string, double>(*other.evals);
         return *this;
     }
     
@@ -70,6 +72,14 @@ public:
      * @return Move The best move
      */
     Move getBestMove();
+
+    /**
+     * @brief Gets the best move for the current position at a given depth
+     * 
+     * @param depth The depth to search to
+     * @return Move The best move
+     */
+    Move getBestMove(int depth);
     /**
      * @brief Plays random moves until the game is over
      * 

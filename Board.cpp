@@ -600,10 +600,8 @@ vector<Move> Board::getAllMoves() const {
 
 bool Board::readMove(string str, Move & move) const {
     vector<Move> moves = getAllMoves();
-    cout << "Possible moves:" << endl;
     for (Move move_ : moves) {
         if (move_.toString() == str) {
-            cout << "found" << endl;
             move = move_;
             return true;
         }
