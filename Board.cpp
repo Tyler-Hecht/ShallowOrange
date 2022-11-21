@@ -803,7 +803,12 @@ int Board::getResult(std::map<std::string, std::vector<Move>> * allMovesMap) con
     if (allMovesMap == NULL) {
         allMoves = getAllMoves();
     } else {
-        allMoves = (*allMovesMap)[writeFEN()];
+        if (allMovesMap->find(writeFEN()) == allMovesMap->end()) {
+            allMoves = getAllMoves();
+            (*allMovesMap)[writeFEN()] = allMoves;
+        } else {
+            allMoves = (*allMovesMap)[writeFEN()];
+        }
     }
     if (allMoves.size() == 0) {
         if (inCheckmate(true, allMoves)) {

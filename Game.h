@@ -14,14 +14,14 @@ private:
     double randomness; // alters the evaluation function by up to this amount in either direction randomly
     std::vector<std::string> moves;
     std::map<std::string, double> * evals; // stores evals so they can be determined faster later
-    std::map<std::string, std::vector<Move>> * allMoves; // stores all possible moves from a position so they can be determined faster later
+    std::map<std::string, std::vector<Move>> * allMovesMap; // stores all possible moves from a position so they can be determined faster later
 public:
     Game() {
         board = new Board();
         board->setup();
         randomness = 0;
         evals = new std::map<std::string, double>();
-        allMoves = new std::map<std::string, std::vector<Move>>();
+        allMovesMap = new std::map<std::string, std::vector<Move>>();
     }
     Game(double randomness) {
         std::srand(time(NULL));
@@ -29,7 +29,7 @@ public:
         board->setup();
         this->randomness = randomness;
         evals = new std::map<std::string, double>();
-        allMoves = new std::map<std::string, std::vector<Move>>();
+        allMovesMap = new std::map<std::string, std::vector<Move>>();
     }
     ~Game() {
         delete board;
@@ -38,7 +38,7 @@ public:
         board = new Board(*other.board);
         moves = other.moves;
         evals = new std::map<std::string, double>(*other.evals);
-        allMoves = new std::map<std::string, std::vector<Move>>(*other.allMoves);
+        allMovesMap = new std::map<std::string, std::vector<Move>>(*other.allMovesMap);
     }
     Game & operator=(const Game & other) {
         delete board;
@@ -46,7 +46,7 @@ public:
         moves = other.moves;
         randomness = other.randomness;
         evals = new std::map<std::string, double>(*other.evals);
-        allMoves = new std::map<std::string, std::vector<Move>>(*other.allMoves);
+        allMovesMap = new std::map<std::string, std::vector<Move>>(*other.allMovesMap);
         return *this;
     }
     
@@ -89,16 +89,23 @@ public:
      * @brief Plays random moves until the game is over
      * 
      * @param print Whether to print the board and move after each move
-     * @param delay The delay between moves in milliseconds
      */
     
-    void playRandomGame(bool print = true, int delay = 0);
+    void playRandomGame(bool print = true);
 
     /**
      * @brief Plays a game where each side tries to get the best position after one move (depth 1)
      * 
      * @param print Whether to print the board and move after each move
-     * @param delay The delay between moves in milliseconds
      */
-    void playGreedyGame(bool print = true, int delay = 0);
+    void playGreedyGame(bool print = true);
+
+    /**
+     * @brief Plays a game where each side tries to get the best position at a given depth
+     * Uses alpha-beta pruning to determine the best move
+     * 
+     * @param print Whether to print the board and move after each move
+     * @param depth The depth to search to
+     */
+    void playDeepGame(bool print = true, int depth = 3);
 };

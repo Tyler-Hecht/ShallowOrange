@@ -11,7 +11,7 @@ void Game::makeMove(Move move) {
 }
 
 string Game::getResult() const {
-    switch (board->getResult()) {
+    switch (board->getResult(allMovesMap)) {
         case 0:
             return "Game in progress";
         case 1:
@@ -67,19 +67,7 @@ Move Game::getBestMove() {
         if (evals->find(fen) != evals->end()) {
             eval = (*evals)[fen];
         } else {
-            // if checkmate set eval to 10000 or -10000
-            int result = tmp->getResult(allMoves);
-            if (result == 1) {
-                eval = 10000;
-            } else if (result == 2) {
-                eval = -10000;
-            }
-            // if draw set eval to 0
-            else if (result == 3 || result == 4 || result == 5 || result == 6) {
-                eval = 0;
-            } else {
-                eval = tmp->evaluate();
-            }
+            eval = tmp->evaluate();
             (*evals)[fen] = eval;
         }
         double adjustment = (rand() % 2) - 1;
@@ -100,7 +88,7 @@ Move Game::getBestMove() {
     return bestMove;
 }
 
-void Game::playRandomGame(bool print, int delay) {
+void Game::playRandomGame(bool print) {
     while (true) {
         vector<Move> moves = board->getAllMoves();
         if (board->getResult() != 0) {
@@ -114,13 +102,12 @@ void Game::playRandomGame(bool print, int delay) {
             board->print();
             cout << move << endl;
         }
-        this_thread::sleep_for(chrono::milliseconds(delay));
     }
 }
 
-void Game::playGreedyGame(bool print, int delay) {
+void Game::playGreedyGame(bool print) {
     while (true) {
-        if (board->getResult() != 0) {
+        if (board->getResult(allMovesMap) != 0) {
             cout << getResult() << endl;
             break;
         }
@@ -130,6 +117,23 @@ void Game::playGreedyGame(bool print, int delay) {
             board->print();
             cout << move << endl;
         }
-        this_thread::sleep_for(chrono::milliseconds(delay));
+    }
+}
+
+void Game::playDeepGame(bool print, int depth) {
+    MoveTree * tree;
+    while (true) {
+        tree = new MoveTree(board, depth, randomness, evals, allMovesMap);
+        if (board->getResult(allMovesMap) != 0) {
+            cout << getResult() << endl;
+            break;
+        }
+        Move move = tree->getBestMove();
+        makeMove(move);
+        if (print) {
+            board->print();
+            cout << move << endl;
+        }
+        delete tree;
     }
 }

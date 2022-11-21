@@ -4,6 +4,14 @@
 using namespace std;
 
 double Board::evaluate() const {
+    int result = getResult();
+    if (result == 1) {
+        return 10000;
+    } else if (result == 2) {
+        return -10000;
+    } else if (result == 3 || result == 4 || result == 5 || result == 6) {
+        return 0;
+    }
     double whiteMaterial = 0;
     double blackMaterial = 0;
     for (int i = 0; i < 8; i++) {
