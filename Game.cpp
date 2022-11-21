@@ -82,6 +82,8 @@ Move Game::getBestMove() {
             }
             evals[fen] = eval;
         }
+        double adjustment = (rand() % 2) - 1;
+        eval += adjustment * randomness;
         if (board->getTurn()) {
             if (eval > bestEval) {
                 bestEval = eval;

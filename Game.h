@@ -10,12 +10,20 @@
 class Game {
 private:
     Board * board;
+    double randomness; // alters the evaluation function by up to this amount in either direction randomly
     std::vector<std::string> moves;
     std::map<std::string, double> evals; // stores evals so they can be determined faster later
 public:
     Game() {
         board = new Board();
         board->setup();
+        randomness = 0;
+    }
+    Game(double randomness) {
+        std::srand(time(NULL));
+        board = new Board();
+        board->setup();
+        this->randomness = randomness;
     }
     ~Game() {
         delete board;
@@ -24,12 +32,14 @@ public:
         board = new Board(*other.board);
         moves = other.moves;
         evals = other.evals;
+        randomness = other.randomness;
     }
     Game & operator=(const Game & other) {
         delete board;
         board = new Board(*other.board);
         moves = other.moves;
         evals = other.evals;
+        randomness = other.randomness;
         return *this;
     }
     
