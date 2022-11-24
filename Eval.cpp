@@ -16,8 +16,8 @@ double Board::evaluate() const {
     double blackMaterial = 0;
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
-            if (squares[i][j]->getPiece() != nullptr) {
-                Piece * piece = squares[i][j]->getPiece();
+            if (squares[i][j] != nullptr) {
+                Piece * piece = squares[i][j];
                 if (piece->getColor()) {
                     whiteMaterial += piece->pointValue();
                     whiteMaterial += piece->locationAdjustment(asString(i, j));
@@ -32,7 +32,7 @@ double Board::evaluate() const {
 }
 
 double Board::pieceLocationAdjustment(string square) const {
-    Piece * piece = getSquare(square)->getPiece();
+    Piece * piece = getPiece(square);
     if (piece == nullptr) {
         return 0;
     }

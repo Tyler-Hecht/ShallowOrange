@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include <map>
-#include "Square.h"
+#include "Piece.h"
 #include "Move.h"
 
 /**
@@ -14,7 +14,7 @@
  * - What en passant is possible
  */
 class Board {
-    Square * squares[8][8];
+    Piece * squares[8][8];
     std::string enPassant;
     bool turn; // 1 for white, 0 for black
     bool canCastleKingsideWhite;
@@ -32,9 +32,6 @@ public:
     Board & operator=(const Board & other);
     void setup();
     void print(bool withCoords = false) const;
-    void light(std::string square, bool lit = true) {
-        getSquare(square)->setLit(true);
-    }
     /**
      * @brief Makes a move on the board, updating relevant member variables
      * 
@@ -47,10 +44,22 @@ public:
      * @param square A string for the square, such as "e4"
      * @return Square* A pointer to the Square object
      */
-    Square * getSquare(std::string square) const {
+    Piece * getPiece(std::string square) const {
         int x = square[0] - 'a';
         int y = square[1] - '1';
         return squares[x][y];
+    }
+
+    /**
+     * @brief Sets the Piece object at a given square
+     * 
+     * @param square The square to set the piece at
+     * @param piece The piece to set
+     */
+    void setPiece(std::string square, Piece * piece) {
+        int x = square[0] - 'a';
+        int y = square[1] - '1';
+        squares[x][y] = piece;
     }
 
     /**
@@ -173,6 +182,14 @@ public:
      * @return std::vector<Move> All the possible moves
      */
     std::vector<Move> getAllMoves() const;
+
+    /**
+     * @brief Determines if there are no legal moves for a the current turn
+     * This is faster than getAllMoves().empty() because it return false once it finds a legal move
+     * 
+     * @return bool Whether or not there are no legal moves
+     */
+    bool noMoves() const;
 
     /**
      * @brief Reads in a move from a string (algabraic notation)
