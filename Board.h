@@ -24,7 +24,7 @@ class Board {
     int halfmoveClock;
     int fullmoveNumber;
     std::map<std::string, int> FENcounter;
-    int result; // see getResult() for more info
+    int result; // see updateResult() for details
 public:
     Board();
     ~Board();
@@ -36,8 +36,9 @@ public:
      * @brief Makes a move on the board, updating relevant member variables
      * 
      * @param move The move to make
+     * @param update Whether to update the result of the game
      */
-    void makeMove(Move move);
+    void makeMove(Move move, bool update = false);
     /**
      * @brief Get the Square object at a given square
      * 
@@ -236,15 +237,24 @@ public:
         return false;
     }
     /**
-     * @brief Gets the result of the position
+     * @brief Updates the result of the position
      * 0 = in progress, 1 = white wins, 2 = black wins, 3 = draw by stalemate,
      * 4 = draw by insufficient material, 5 = draw by 50 move rule,
      * 6 = draw by threefold repetition
      * 
-     * @param allMoves_ All possible moves for the current turn
+     * @param allMovesMap A map of possible moves for the current turn
      * @return int The result of the position
      */
-    int getResult(std::map<std::string, std::vector<Move>> * allMovesMap = NULL) const;
+    int updateResult(std::map<std::string, std::vector<Move>> * allMovesMap = NULL);
+
+    /**
+     * @brief Gets the result of the position
+     * 
+     * @return int The result of the position
+     */
+    int getResult() const {
+        return result;
+    }
 
     /**
      * @brief Evaluates the position (no depth)

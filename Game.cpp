@@ -6,12 +6,12 @@
 using namespace std;
 
 void Game::makeMove(Move move) {
-    board->makeMove(move);
+    board->makeMove(move, true);
     moves.push_back(move.toString());
 }
 
 string Game::getResult() const {
-    switch (board->getResult(allMovesMap)) {
+    switch (board->getResult()) {
         case 0:
             return "Game in progress";
         case 1:
@@ -61,7 +61,7 @@ Move Game::getBestMove() {
         // evaluate the move
         Move move = moves[i];
         tmp = new Board(*board);
-        tmp->makeMove(move);
+        tmp->makeMove(move, true);
         double eval;
         string fen = tmp->writeFEN();
         if (evals->find(fen) != evals->end()) {
@@ -107,7 +107,7 @@ void Game::playRandomGame(bool print) {
 
 void Game::playGreedyGame(bool print) {
     while (true) {
-        if (board->getResult(allMovesMap) != 0) {
+        if (board->getResult() != 0) {
             cout << getResult() << endl;
             break;
         }
@@ -124,7 +124,7 @@ void Game::playDeepGame(bool print, int depth) {
     MoveTree * tree;
     while (true) {
         tree = new MoveTree(board, depth, randomness, evals, allMovesMap);
-        if (board->getResult(allMovesMap) != 0) {
+        if (board->getResult() != 0) {
             cout << getResult() << endl;
             break;
         }

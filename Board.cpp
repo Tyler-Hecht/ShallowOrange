@@ -114,7 +114,7 @@ void Board::print(bool withCoords) const {
     }
 }
 
-void Board::makeMove(Move move) {
+void Board::makeMove(Move move, bool update) {
     // the piece that is moving
     Piece * piece = getPiece(move.getFrom());
     // handles promotion
@@ -214,6 +214,9 @@ void Board::makeMove(Move move) {
         FENcounter[FEN]++;
     } else {
         FENcounter[FEN] = 1;
+    }
+    if (update) {
+        updateResult();
     }
 }
 
@@ -816,7 +819,7 @@ bool Board::insufficientMaterial() const {
     return false;
 }
 
-int Board::getResult(std::map<std::string, std::vector<Move>> * allMovesMap) const {
+int Board::updateResult(std::map<std::string, std::vector<Move>> * allMovesMap) {
     vector<Move> allMoves;
     if (allMovesMap == NULL) {
         allMoves = getAllMoves();
@@ -830,19 +833,26 @@ int Board::getResult(std::map<std::string, std::vector<Move>> * allMovesMap) con
     }
     if (noMoves()) {
         if (inCheckmate(true, allMoves)) {
+            result = 2;
             return 2;
         } else if (inCheckmate(false, allMoves)) {
+            result = 1;
             return 1;
         } else {
+            result = 3;
             return 3;
         }
     } else if (insufficientMaterial()) {
+        result = 4;
         return 4;
     } else if (halfmoveClock >= 100) {
+        result = 5;
         return 5;
     } else if (repetition(3)) {
+        result = 6;
         return 6;
     } else {
+        result = 0;
         return 0;
     }
 }

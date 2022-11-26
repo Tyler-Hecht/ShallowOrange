@@ -4,7 +4,6 @@
 using namespace std;
 
 double Board::evaluate() const {
-    int result = getResult();
     if (result == 1) {
         return 10000;
     } else if (result == 2) {
