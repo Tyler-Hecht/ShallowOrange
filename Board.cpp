@@ -819,30 +819,20 @@ bool Board::insufficientMaterial() const {
     return false;
 }
 
-int Board::updateResult(std::map<std::string, std::vector<Move>> * allMovesMap) {
-    vector<Move> allMoves;
-    if (allMovesMap == NULL) {
-        allMoves = getAllMoves();
-    } else {
-        if (allMovesMap->find(writeFEN()) == allMovesMap->end()) {
-            allMoves = getAllMoves();
-            (*allMovesMap)[writeFEN()] = allMoves;
-        } else {
-            allMoves = (*allMovesMap)[writeFEN()];
-        }
-    }
+int Board::updateResult() {
     if (noMoves()) {
-        if (inCheckmate(true, allMoves)) {
+        if (inCheckmate(true)) {
             result = 2;
             return 2;
-        } else if (inCheckmate(false, allMoves)) {
+        } else if (inCheckmate(false)) {
             result = 1;
             return 1;
         } else {
             result = 3;
             return 3;
         }
-    } else if (insufficientMaterial()) {
+    }
+    if (insufficientMaterial()) {
         result = 4;
         return 4;
     } else if (halfmoveClock >= 100) {
