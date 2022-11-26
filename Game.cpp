@@ -50,10 +50,17 @@ string Game::getPGN() const {
 }
 
 Move Game::getBestMove() {
-    if (board->noMoves()) {
+    string fen = board->writeFEN();
+    vector<Move> moves;
+    if (allMovesMap->find(fen) != allMovesMap->end()) {
+        moves = (*allMovesMap)[fen];
+    } else {
+        moves = board->getAllMoves();
+        (*allMovesMap)[fen] = moves;
+    }
+    if (moves.empty()) {
         return Move();
     }
-    vector<Move> moves = board->getAllMoves();
     Board * tmp;
     Move bestMove;
     double bestEval = board->getTurn() ? -numeric_limits<double>::infinity() : numeric_limits<double>::infinity();

@@ -55,7 +55,7 @@ private:
      * @param depth 
      * @return std::pair<Move, double> 
      */
-    std::pair<Move, double> getBestMove(MoveNode * subroot, int depth, double alpha, double beta, bool maximizing);
+    std::pair<Move, double> getBestMove(MoveNode * subroot, int depth);
 public:
     MoveTree(Board * board, int depth, double randomness, std::map<std::string, double> * evals = new std::map<std::string, double>(), std::map<std::string, std::vector<Move>> * allMoves = new std::map<std::string, std::vector<Move>>()) {
         srand(time(NULL));
@@ -77,7 +77,6 @@ public:
      * @return Move The best move
      */
     Move getBestMove() {
-        bool color = root->board->getTurn();
-        return getBestMove(root, 0, -std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity(), color).first;
+        return getBestMove(root, 0).first;
     }
 };

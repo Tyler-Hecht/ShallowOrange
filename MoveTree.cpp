@@ -42,39 +42,6 @@ void MoveTree::deleteTree(MoveNode * subroot) {
     }
 }
 
-pair<Move, double> MoveTree::getBestMove(MoveNode * subroot, int depth, double alpha, double beta, bool maximizing) {
-    if (depth == this->depth || subroot->isLeaf) {
-        return pair<Move, double>(subroot->move, subroot->eval);
-    }
-    if (maximizing) {
-        double bestEval = -numeric_limits<double>::infinity();
-        Move bestMove = subroot->move;
-        for (int i = 0; i < subroot->lines.size(); i++) {
-            pair<Move, double> tmp = getBestMove(subroot->lines[i], depth + 1, alpha, beta, false);
-            if (tmp.second > bestEval) {
-                bestEval = tmp.second;
-                bestMove = tmp.first;
-            }
-            alpha = max(alpha, bestEval);
-            if (beta <= alpha) {
-                break;
-            }
-        }
-        return pair<Move, double>(bestMove, bestEval);
-    } else {
-        double bestEval = numeric_limits<double>::max();
-        Move bestMove = subroot->move;
-        for (int i = 0; i < subroot->lines.size(); i++) {
-            pair<Move, double> tmp = getBestMove(subroot->lines[i], depth + 1, alpha, beta, true);
-            if (tmp.second < bestEval) {
-                bestEval = tmp.second;
-                bestMove = tmp.first;
-            }
-            beta = min(beta, bestEval);
-            if (beta <= alpha) {
-                break;
-            }
-        }
-        return pair<Move, double>(bestMove, bestEval);
-    }
+pair<Move, double> MoveTree::getBestMove(MoveNode * subroot, int depth) {
+    return pair<Move, double>();
 }
