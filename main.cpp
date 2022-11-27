@@ -7,6 +7,9 @@ using namespace std;
 int main() {
     Board * board = new Board();
     board->setup();
-    MoveTree * tree = new MoveTree(board, 2, 0);
-    cout << tree->getBestMove() << endl;
+    auto start = chrono::high_resolution_clock::now();
+    MoveTree tree(board, 3);
+    auto end = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::microseconds>(end - start);
+    cout << duration.count() * 1e-6 << endl;
 }

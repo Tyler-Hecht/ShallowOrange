@@ -91,14 +91,14 @@ public:
      * @param print Whether to print the board and move after each move
      */
     
-    void playRandomGame(bool print = false);
+    void generateRandomGame(bool print = false);
 
     /**
      * @brief Plays a game where each side tries to get the best position after one move (depth 1)
      * 
      * @param print Whether to print the board and move after each move
      */
-    void playGreedyGame(bool print = false);
+    void generateGreedyGame(bool print = false);
 
     /**
      * @brief Plays a game where each side tries to get the best position at a given depth
@@ -107,5 +107,5 @@ public:
      * @param print Whether to print the board and move after each move
      * @param depth The depth to search to
      */
-    void playDeepGame(bool print = false, int depth = 3);
+    void generateDeepGame(int depth = 3, bool print = false);
 };

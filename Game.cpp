@@ -95,7 +95,7 @@ Move Game::getBestMove() {
     return bestMove;
 }
 
-void Game::playRandomGame(bool print) {
+void Game::generateRandomGame(bool print) {
     while (true) {
         vector<Move> moves = board->getAllMoves();
         if (board->getResult() != 0) {
@@ -112,7 +112,7 @@ void Game::playRandomGame(bool print) {
     }
 }
 
-void Game::playGreedyGame(bool print) {
+void Game::generateGreedyGame(bool print) {
     while (true) {
         if (board->getResult() != 0) {
             cout << getResult() << endl;
@@ -127,7 +127,7 @@ void Game::playGreedyGame(bool print) {
     }
 }
 
-void Game::playDeepGame(bool print, int depth) {
+void Game::generateDeepGame(int depth, bool print) {
     MoveTree * tree;
     while (true) {
         tree = new MoveTree(board, depth, randomness, evals, allMovesMap);

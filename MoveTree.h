@@ -49,15 +49,14 @@ private:
     void deleteTree(MoveNode * subroot);
 
     /**
-     * @brief Gets the best move from a subtree using alpha-beta pruning
+     * @brief Gets the best eval from a subtree using minimax
      * 
-     * @param subroot 
-     * @param depth 
-     * @return std::pair<Move, double> 
+     * @param subroot The root of the subtree to search
+     * @return double The best eval from the subtree
      */
-    std::pair<Move, double> getBestMove(MoveNode * subroot, int depth);
+    double getBestEval(MoveNode * subroot);
 public:
-    MoveTree(Board * board, int depth, double randomness, std::map<std::string, double> * evals = new std::map<std::string, double>(), std::map<std::string, std::vector<Move>> * allMoves = new std::map<std::string, std::vector<Move>>()) {
+    MoveTree(Board * board, int depth, double randomness = 0, std::map<std::string, double> * evals = new std::map<std::string, double>(), std::map<std::string, std::vector<Move>> * allMoves = new std::map<std::string, std::vector<Move>>()) {
         srand(time(NULL));
         Board * board_ = new Board(*board);
         root = new MoveNode(Move(), board_);
@@ -72,11 +71,27 @@ public:
     }
     /**
      * @brief Gets the best move at the depth of the tree
-     * Uses a minimax algorithm with alpha-beta pruning
+     * Uses a minimax algorithm
      * 
      * @return Move The best move
      */
     Move getBestMove() {
-        return getBestMove(root, 0).first;
+        Move bestMove = root->lines[0]->move;
+        double bestEval = getBestEval(root->lines[0]);
+        for (int i = 1; i < root->lines.size(); i++) {
+            double eval = getBestEval(root->lines[i]);
+            if (root->board->getTurn()) {
+                if (eval > bestEval) {
+                    bestEval = eval;
+                    bestMove = root->lines[i]->move;
+                }
+            } else {
+                if (eval < bestEval) {
+                    bestEval = eval;
+                    bestMove = root->lines[i]->move;
+                }
+            }
+        }
+        return bestMove;
     }
 };

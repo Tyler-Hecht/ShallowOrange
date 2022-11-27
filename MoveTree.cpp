@@ -16,7 +16,7 @@ void MoveTree::generateTree(MoveNode * subroot, int depth) {
     }
     for (int i = 0; i < moves.size(); i++) {
         Board * tmp = new Board(*subroot->board);
-        tmp->makeMove(moves[i]);
+        tmp->makeMove(moves[i], true);
         MoveNode * node = new MoveNode(moves[i], tmp);
         string fen = tmp->writeFEN();
         if (evals->find(fen) == evals->end()) {
@@ -42,6 +42,27 @@ void MoveTree::deleteTree(MoveNode * subroot) {
     }
 }
 
-pair<Move, double> MoveTree::getBestMove(MoveNode * subroot, int depth) {
-    return pair<Move, double>();
+double MoveTree::getBestEval(MoveNode * subroot) {
+    if (subroot->isLeaf) {
+        return subroot->eval;
+    }
+    double bestEval;
+    if (subroot->board->getTurn()) {
+        bestEval = -std::numeric_limits<double>::infinity();
+    } else {
+        bestEval = std::numeric_limits<double>::infinity();
+    }
+    for (int i = 0; i < subroot->lines.size(); i++) {
+        double eval = getBestEval(subroot->lines[i]);
+        if (subroot->board->getTurn()) {
+            if (eval > bestEval) {
+                bestEval = eval;
+            }
+        } else {
+            if (eval < bestEval) {
+                bestEval = eval;
+            }
+        }
+    }
+    return bestEval;
 }
