@@ -6,12 +6,12 @@
 using namespace std;
 
 void Game::makeMove(Move move) {
-    board->makeMove(move, true);
+    board.makeMove(move, true);
     moves.push_back(move.toString());
 }
 
 string Game::getResult() const {
-    switch (board->getResult()) {
+    switch (board.getResult()) {
         case 0:
             return "Game in progress";
         case 1:
@@ -38,7 +38,7 @@ string Game::getPGN() const {
         }
         PGN += moves[i] + " ";
     }
-    int result = board->getResult();
+    int result = board.getResult();
     if (result == 1) {
         PGN += "1-0";
     } else if (result == 2) {
@@ -50,36 +50,36 @@ string Game::getPGN() const {
 }
 
 Move Game::getBestMove() {
-    string fen = board->writeFEN();
+    string fen = board.writeFEN();
     vector<Move> moves;
     if (allMovesMap->find(fen) != allMovesMap->end()) {
         moves = (*allMovesMap)[fen];
     } else {
-        moves = board->getAllMoves();
+        moves = board.getAllMoves();
         (*allMovesMap)[fen] = moves;
     }
     if (moves.empty()) {
         return Move();
     }
-    Board * tmp;
+    Board tmp;
     Move bestMove;
-    double bestEval = board->getTurn() ? -numeric_limits<double>::infinity() : numeric_limits<double>::infinity();
+    double bestEval = board.getTurn() ? -numeric_limits<double>::infinity() : numeric_limits<double>::infinity();
     for (int i = 0; i < moves.size(); i++) {
         // evaluate the move
         Move move = moves[i];
-        tmp = new Board(*board);
-        tmp->makeMove(move, true);
+        tmp = Board(board);
+        tmp.makeMove(move, true);
         double eval;
-        string fen = tmp->writeFEN();
+        string fen = tmp.writeFEN();
         if (evals->find(fen) != evals->end()) {
             eval = (*evals)[fen];
         } else {
-            eval = tmp->evaluate();
+            eval = tmp.evaluate();
             (*evals)[fen] = eval;
         }
         double adjustment = (rand() % 2) - 1;
         eval += adjustment * randomness;
-        if (board->getTurn()) {
+        if (board.getTurn()) {
             if (eval > bestEval) {
                 bestEval = eval;
                 bestMove = move;
@@ -90,15 +90,14 @@ Move Game::getBestMove() {
                 bestMove = move;
             }
         }
-        delete tmp;
     }
     return bestMove;
 }
 
 void Game::generateRandomGame(bool print) {
     while (true) {
-        vector<Move> moves = board->getAllMoves();
-        if (board->getResult() != 0) {
+        vector<Move> moves = board.getAllMoves();
+        if (board.getResult() != 0) {
             cout << getResult() << endl;
             break;
         }
@@ -106,7 +105,7 @@ void Game::generateRandomGame(bool print) {
         Move move = moves[rand() % moves.size()];
         makeMove(move);
         if (print) {
-            board->print();
+            board.print();
             cout << move << endl;
         }
     }
@@ -114,33 +113,32 @@ void Game::generateRandomGame(bool print) {
 
 void Game::generateGreedyGame(bool print) {
     while (true) {
-        if (board->getResult() != 0) {
+        if (board.getResult() != 0) {
             cout << getResult() << endl;
             break;
         }
         Move move = getBestMove();
         makeMove(move);
         if (print) {
-            board->print();
+            board.print();
             cout << move << endl;
         }
     }
 }
 
 void Game::generateDeepGame(int depth, bool print) {
-    MoveTree * tree;
+    MoveTree tree;
     while (true) {
-        tree = new MoveTree(board, depth, randomness, evals, allMovesMap);
-        if (board->getResult() != 0) {
+        tree = MoveTree(board, depth, randomness, evals, allMovesMap);
+        if (board.getResult() != 0) {
             cout << getResult() << endl;
             break;
         }
-        Move move = tree->getBestMove();
+        Move move = tree.getBestMove();
         makeMove(move);
         if (print) {
-            board->print();
+            board.print();
             cout << move << endl;
         }
-        delete tree;
     }
 }

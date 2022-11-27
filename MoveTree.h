@@ -13,11 +13,11 @@ class MoveTree {
 private:
     struct MoveNode {
         Move move;
-        Board * board;
+        Board board;
         std::vector<MoveNode*> lines;
         double eval;
         bool isLeaf;
-        MoveNode(Move move, Board * board) {
+        MoveNode(Move move, Board board) {
             this->move = move;
             this->board = board;
             this->isLeaf = true;
@@ -56,9 +56,16 @@ private:
      */
     double getBestEval(MoveNode * subroot);
 public:
-    MoveTree(Board * board, int depth, double randomness = 0, std::map<std::string, double> * evals = new std::map<std::string, double>(), std::map<std::string, std::vector<Move>> * allMoves = new std::map<std::string, std::vector<Move>>()) {
+    MoveTree() {
+        root = nullptr;
+        depth = 0;
+        randomness = 0;
+        evals = new std::map<std::string, double>();
+        allMovesMap = new std::map<std::string, std::vector<Move>>();
+    }
+    MoveTree(Board board, int depth, double randomness = 0, std::map<std::string, double> * evals = new std::map<std::string, double>(), std::map<std::string, std::vector<Move>> * allMoves = new std::map<std::string, std::vector<Move>>()) {
         srand(time(NULL));
-        Board * board_ = new Board(*board);
+        Board board_ = Board(board);
         root = new MoveNode(Move(), board_);
         this->depth = depth;
         this->randomness = randomness;
@@ -80,7 +87,7 @@ public:
         double bestEval = getBestEval(root->lines[0]);
         for (int i = 1; i < root->lines.size(); i++) {
             double eval = getBestEval(root->lines[i]);
-            if (root->board->getTurn()) {
+            if (root->board.getTurn()) {
                 if (eval > bestEval) {
                     bestEval = eval;
                     bestMove = root->lines[i]->move;

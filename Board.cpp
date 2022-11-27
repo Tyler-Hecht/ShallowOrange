@@ -362,13 +362,11 @@ bool Board::isLegal(Move move) const {
         }
     }
     // not legal if trying to move into check
-    Board * tmp = new Board(*this);
-    tmp->makeMove(move);
-    if (tmp->inCheck(!tmp->turn, tmp->findKing(!tmp->turn))) {
-        delete tmp;
+    Board tmp = Board(*this);
+    tmp.makeMove(move);
+    if (tmp.inCheck(!tmp.turn, tmp.findKing(!tmp.turn))) {
         return false;
     }
-    delete tmp;
     return true;
 }
 
@@ -540,13 +538,12 @@ vector<Move> Board::getMoves(string square) const {
     }
     // add check to moves
     for (int i = 0; i < legalMoves.size(); i++) {
-        Board * tmp = new Board(*this);
-        tmp->makeMove(legalMoves[i]);
-        if (tmp->inCheck(tmp->turn, tmp->findKing(tmp->turn))) {
+        Board tmp = Board(*this);
+        tmp.makeMove(legalMoves[i]);
+        if (tmp.inCheck(tmp.turn, tmp.findKing(tmp.turn))) {
             legalMoves[i].setCheck(true);
-            legalMoves[i].setCheckmate(tmp->inCheckmate(!turn));
+            legalMoves[i].setCheckmate(tmp.inCheckmate(!turn));
         }
-        delete tmp;
     }
     return legalMoves;
 }
