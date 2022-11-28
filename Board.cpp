@@ -17,6 +17,7 @@ Board::Board() {
         }
     }
     result = 0;
+    phase = 0;
 }
 
 Board::~Board() {
@@ -52,6 +53,7 @@ Board::Board(const Board & board) {
     }
     FENcounter = board.FENcounter;
     result = board.result;
+    phase = board.phase;
 }
 
 Board & Board::operator=(const Board & other) {
@@ -78,6 +80,7 @@ Board & Board::operator=(const Board & other) {
         }
         FENcounter = other.FENcounter;
         result = other.result;
+        phase = other.phase;
     }
     return *this;
 }
@@ -114,7 +117,7 @@ void Board::print(bool withCoords) const {
     }
 }
 
-void Board::makeMove(Move move, bool update) {
+void Board::makeMove(Move & move, bool update) {
     // the piece that is moving
     Piece * piece = getPiece(move.getFrom());
     // handles promotion
@@ -218,6 +221,7 @@ void Board::makeMove(Move move, bool update) {
     if (update) {
         updateResult();
     }
+    updatePhase();
 }
 
 vector<string> Board::knightSquares(string square) const {
@@ -330,7 +334,7 @@ bool Board::inCheck(bool color, std::string kingSquare) const {
     return false;
 }
 
-bool Board::isLegal(Move move) const {
+bool Board::isLegal(Move & move) const {
     // not legal if trying to castle in or through check
     if (move.isCastle()) {
         // white
@@ -840,6 +844,25 @@ int Board::updateResult() {
         return 6;
     } else {
         result = 0;
+        return 0;
+    }
+}
+
+int Board::updatePhase() {
+    if (fullmoveNumber < 6) {
+        phase = 0;
+        return 0;
+    }
+    if (!(canCastleKingsideBlack || canCastleQueensideBlack || canCastleKingsideWhite || canCastleQueensideWhite)) {
+        if (fullmoveNumber <= 40) {
+            phase = 1;
+            return 1;
+        } else {
+            phase = 2;
+            return 2;
+        }
+    } else {
+        phase = 0;
         return 0;
     }
 }

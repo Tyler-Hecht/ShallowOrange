@@ -25,6 +25,7 @@ class Board {
     int fullmoveNumber;
     std::map<std::string, int> FENcounter;
     int result; // see updateResult() for details
+    int phase; // 0 for opening, 1 for middle game, 2 for endgame
 public:
     Board();
     ~Board();
@@ -38,7 +39,7 @@ public:
      * @param move The move to make
      * @param update Whether to update the result of the game
      */
-    void makeMove(Move move, bool update = false);
+    void makeMove(Move & move, bool update = false);
     /**
      * @brief Get the Square object at a given square
      * 
@@ -138,7 +139,7 @@ public:
      * @param move The move to check
      * @return bool Whether or not the move is legal
      */
-    bool isLegal(Move move) const;
+    bool isLegal(Move & move) const;
 
     /**
      * @brief Gets all the possible pawn moves for a given square
@@ -253,20 +254,27 @@ public:
     }
 
     /**
+     * @brief Updates the phase of the game
+     * 
+     * @return int The phase of the game
+     */
+    int updatePhase();
+    
+    /**
+     * @brief Gets the phase of the game
+     * 
+     * @return int The phase of the game
+     */
+    int getPhase() const {
+        return phase;
+    }
+
+    /**
      * @brief Evaluates the position (no depth)
      * 
      * @return double The evaluation of the position
      */
     double evaluate() const;
-private:
-    // these are used for the eval
-    /**
-     * @brief Adjusts the material value of a piece based on its location on the board
-     * 
-     * @param square The square the piece is on
-     * @return double The adjustment to be made
-     */
-    double pieceLocationAdjustment(std::string square) const;
 };
 
 /**

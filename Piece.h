@@ -32,15 +32,17 @@ public:
      * @brief Gets the adjustment to the point value of the piece based on its location
      * 
      * @param square The square the piece is on
+     * @param phase The phase of the game (0 for opening, 1 for middle game, 2 for endgame)
      * @return double The adjustment to be made
      */
-    double locationAdjustment(std::string square) const;
+    double locationAdjustment(std::string square, int phase) const;
     /**
      * @brief Gets a table of the piece's adjusted value based on its location
      * 
+     * @param phase The phase of the game (0 for opening, 1 for middle game, 2 for endgame)
      * @return std::vector<std::vector<double>> The table
      */
-    std::vector<std::vector<double>> getPieceTable() const;
+    std::vector<std::vector<double>> getPieceTable(int phase) const;
 };
 
 /**

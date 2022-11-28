@@ -5,7 +5,7 @@
 
 using namespace std;
 
-void Game::makeMove(Move move) {
+void Game::makeMove(Move & move) {
     board.makeMove(move, true);
     moves.push_back(move.toString());
 }

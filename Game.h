@@ -55,7 +55,7 @@ public:
      * 
      * @param move The move to make
      */
-    void makeMove(Move move);
+    void makeMove(Move & move);
     /**
      * @brief Gets the result of the game
      * 

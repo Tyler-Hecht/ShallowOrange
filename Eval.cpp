@@ -19,21 +19,13 @@ double Board::evaluate() const {
                 Piece * piece = squares[i][j];
                 if (piece->getColor()) {
                     whiteMaterial += piece->pointValue();
-                    whiteMaterial += piece->locationAdjustment(asString(i, j));
+                    whiteMaterial += piece->locationAdjustment(asString(i, j), phase);
                 } else {
                     blackMaterial += piece->pointValue();
-                    blackMaterial += piece->locationAdjustment(asString(i, j));
+                    blackMaterial += piece->locationAdjustment(asString(i, j), phase);
                 }
             }
         }
     }
     return whiteMaterial - blackMaterial;
-}
-
-double Board::pieceLocationAdjustment(string square) const {
-    Piece * piece = getPiece(square);
-    if (piece == nullptr) {
-        return 0;
-    }
-    return piece->locationAdjustment(square);
 }
