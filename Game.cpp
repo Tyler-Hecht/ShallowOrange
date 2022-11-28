@@ -142,3 +142,32 @@ void Game::generateDeepGame(int depth, bool print) {
         }
     }
 }
+
+void Game::playGame(int depth, bool yourColor) {
+    MoveTree tree;
+    board.print();
+    while (true) {
+        if (board.getResult() != 0) {
+            cout << getResult() << endl;
+            break;
+        }
+        if (board.getTurn() == yourColor) {
+            string moveString;
+            cout << "Enter move: ";
+            cin >> moveString;
+            Move move;
+            while (!board.readMove(moveString, move)) {
+                cout << "Invalid move. Try again: ";
+                cin >> moveString;
+            }
+            makeMove(move);
+            board.print();
+        } else {
+            tree = MoveTree(board, depth, randomness, evals, allMovesMap);
+            Move move = tree.getBestMove();
+            makeMove(move);
+            board.print();
+            cout << move << endl;
+        }
+    }
+}

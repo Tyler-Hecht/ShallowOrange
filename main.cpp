@@ -5,7 +5,7 @@
 using namespace std;
 
 int main() {
-    Game game = Game(0);
-    game.generateDeepGame(3, true);
+    Game game = Game(0.1);
+    game.playGame(3, false);
     cout << game.getPGN() << endl;
 }

@@ -108,4 +108,12 @@ public:
      * @param depth The depth to search to
      */
     void generateDeepGame(int depth = 3, bool print = false);
+
+    /**
+     * @brief A game of chess where you play against the engine
+     * 
+     * @param depth The depth of the engine
+     * @param yourColor Whether you are white (true) or black (false)
+     */
+    void playGame(int depth = 3, bool yourColor = true);
 };
