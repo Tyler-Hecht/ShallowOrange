@@ -151,6 +151,7 @@ void Game::playGame(int depth, bool yourColor) {
             makeMove(move);
             board.print();
         } else {
+            cout << "Thinking..." << endl;
             tree = MoveTree(board, depth, randomness);
             Move move = tree.getBestMove();
             makeMove(move);
