@@ -15,7 +15,7 @@ private:
         Move move;
         Board board;
         std::vector<MoveNode*> lines;
-        double eval;
+        Eval eval;
         bool isLeaf;
         MoveNode(Move move, Board board) {
             this->move = move;
@@ -31,8 +31,6 @@ private:
     MoveNode * root;
     int depth;
     double randomness;
-    std::map<std::string, double> * evals; // stores evals so they can be determined faster later
-    std::map<std::string, std::vector<Move>> * allMovesMap; // stores all possible moves from a position so they can be determined faster later
     
     /**
      * @brief Generates a tree of possible moves from a given position
@@ -54,23 +52,19 @@ private:
      * @param subroot The root of the subtree to search
      * @return double The best eval from the subtree
      */
-    double getBestEval(MoveNode * subroot);
+    Eval getBestEval(MoveNode * subroot) const;
 public:
     MoveTree() {
         root = nullptr;
         depth = 0;
         randomness = 0;
-        evals = new std::map<std::string, double>();
-        allMovesMap = new std::map<std::string, std::vector<Move>>();
     }
-    MoveTree(Board board, int depth, double randomness = 0, std::map<std::string, double> * evals = new std::map<std::string, double>(), std::map<std::string, std::vector<Move>> * allMoves = new std::map<std::string, std::vector<Move>>()) {
+    MoveTree(Board board, int depth, double randomness = 0) {
         srand(time(NULL));
         Board board_ = Board(board);
         root = new MoveNode(Move(), board_);
         this->depth = depth;
         this->randomness = randomness;
-        this->evals = evals;
-        this->allMovesMap = allMoves;
         generateTree(root, depth);
     }
     ~MoveTree() {
@@ -82,23 +76,5 @@ public:
      * 
      * @return Move The best move
      */
-    Move getBestMove() {
-        Move bestMove = root->lines[0]->move;
-        double bestEval = getBestEval(root->lines[0]);
-        for (int i = 1; i < root->lines.size(); i++) {
-            double eval = getBestEval(root->lines[i]);
-            if (root->board.getTurn()) {
-                if (eval > bestEval) {
-                    bestEval = eval;
-                    bestMove = root->lines[i]->move;
-                }
-            } else {
-                if (eval < bestEval) {
-                    bestEval = eval;
-                    bestMove = root->lines[i]->move;
-                }
-            }
-        }
-        return bestMove;
-    }
+    Move getBestMove() const;
 };

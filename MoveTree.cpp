@@ -7,23 +7,14 @@ void MoveTree::generateTree(MoveNode * subroot, int depth) {
     if (depth == 0) {
         return;
     }
-    std::vector<Move> moves;
-    if (allMovesMap->find(subroot->board.writeFEN()) != allMovesMap->end()) {
-        moves = (*allMovesMap)[subroot->board.writeFEN()];
-    } else {
-        moves = subroot->board.getAllMoves();
-        (*allMovesMap)[subroot->board.writeFEN()] = moves;
-    }
+    std::vector<Move> moves = subroot->board.getAllMoves();
     for (int i = 0; i < moves.size(); i++) {
         Board tmp = Board(subroot->board);
         tmp.makeMove(moves[i], true);
         MoveNode * node = new MoveNode(moves[i], tmp);
         string fen = tmp.writeFEN();
-        if (evals->find(fen) == evals->end()) {
-            (*evals)[fen] = tmp.evaluate();
-        }
         double adjustment = (rand() % 2) - 1;
-        node->eval = (*evals)[fen] + adjustment * randomness;
+        node->eval = tmp.evaluate() + adjustment * randomness;
         node->board = tmp;
         node->move = moves[i];
         subroot->lines.push_back(node);
@@ -42,18 +33,20 @@ void MoveTree::deleteTree(MoveNode * subroot) {
     }
 }
 
-double MoveTree::getBestEval(MoveNode * subroot) {
+Eval MoveTree::getBestEval(MoveNode * subroot) const {
     if (subroot->isLeaf) {
-        return subroot->eval;
+        Eval eval = subroot->eval;
+        eval.incrementMate();
+        return eval;
     }
-    double bestEval;
+    Eval bestEval;
     if (subroot->board.getTurn()) {
-        bestEval = -std::numeric_limits<double>::infinity();
+        bestEval = Eval(0, false);
     } else {
-        bestEval = std::numeric_limits<double>::infinity();
+        bestEval = Eval(0, true);
     }
     for (int i = 0; i < subroot->lines.size(); i++) {
-        double eval = getBestEval(subroot->lines[i]);
+        Eval eval = getBestEval(subroot->lines[i]);
         if (subroot->board.getTurn()) {
             if (eval > bestEval) {
                 bestEval = eval;
@@ -64,5 +57,27 @@ double MoveTree::getBestEval(MoveNode * subroot) {
             }
         }
     }
+    // increase moves to mate
+    bestEval.incrementMate();
     return bestEval;
+}
+
+Move MoveTree::getBestMove() const {
+    Move bestMove = root->lines[0]->move;
+    Eval bestEval = getBestEval(root->lines[0]);
+    for (int i = 1; i < root->lines.size(); i++) {
+        Eval eval = getBestEval(root->lines[i]);
+        if (root->board.getTurn()) {
+            if (eval > bestEval) {
+                bestEval = eval;
+                bestMove = root->lines[i]->move;
+            }
+        } else {
+            if (eval < bestEval) {
+                bestEval = eval;
+                bestMove = root->lines[i]->move;
+            }
+        }
+    }
+    return bestMove;
 }

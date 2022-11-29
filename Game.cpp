@@ -51,37 +51,25 @@ string Game::getPGN() const {
 
 Move Game::getBestMove() {
     string fen = board.writeFEN();
-    vector<Move> moves;
-    if (allMovesMap->find(fen) != allMovesMap->end()) {
-        moves = (*allMovesMap)[fen];
-    } else {
-        moves = board.getAllMoves();
-        (*allMovesMap)[fen] = moves;
-    }
+    vector<Move> moves = board.getAllMoves();
     if (moves.empty()) {
         return Move();
     }
     Board tmp;
     Move bestMove;
-    double bestEval = board.getTurn() ? -numeric_limits<double>::infinity() : numeric_limits<double>::infinity();
+    Eval bestEval = board.getTurn() ? Eval(0, false) : Eval(0, true);
     for (int i = 0; i < moves.size(); i++) {
         // evaluate the move
         Move move = moves[i];
         tmp = Board(board);
         tmp.makeMove(move, true);
-        double eval;
-        string fen = tmp.writeFEN();
-        if (evals->find(fen) != evals->end()) {
-            eval = (*evals)[fen];
-        } else {
-            eval = tmp.evaluate();
-            (*evals)[fen] = eval;
-        }
+        Eval eval = tmp.evaluate();
         double adjustment = (rand() % 2) - 1;
         eval += adjustment * randomness;
         if (board.getTurn()) {
             if (eval > bestEval) {
                 bestEval = eval;
+                cout << bestEval << endl;
                 bestMove = move;
             }
         } else {
@@ -129,7 +117,7 @@ void Game::generateGreedyGame(bool print) {
 void Game::generateDeepGame(int depth, bool print) {
     MoveTree tree;
     while (true) {
-        tree = MoveTree(board, depth, randomness, evals, allMovesMap);
+        tree = MoveTree(board, depth, randomness);
         if (board.getResult() != 0) {
             cout << getResult() << endl;
             break;
@@ -163,7 +151,7 @@ void Game::playGame(int depth, bool yourColor) {
             makeMove(move);
             board.print();
         } else {
-            tree = MoveTree(board, depth, randomness, evals, allMovesMap);
+            tree = MoveTree(board, depth, randomness);
             Move move = tree.getBestMove();
             makeMove(move);
             board.print();

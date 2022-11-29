@@ -1,31 +1,32 @@
-#include "Board.h"
-#include <map>
+#include "Eval.h"
 
 using namespace std;
 
-double Board::evaluate() const {
-    if (result == 1) {
-        return 10000;
-    } else if (result == 2) {
-        return -10000;
-    } else if (result == 3 || result == 4 || result == 5 || result == 6) {
-        return 0;
-    }
-    double whiteMaterial = 0;
-    double blackMaterial = 0;
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
-            if (squares[i][j] != nullptr) {
-                Piece * piece = squares[i][j];
-                if (piece->getColor()) {
-                    whiteMaterial += piece->pointValue();
-                    whiteMaterial += piece->locationAdjustment(asString(i, j), phase);
-                } else {
-                    blackMaterial += piece->pointValue();
-                    blackMaterial += piece->locationAdjustment(asString(i, j), phase);
-                }
-            }
+bool Eval::operator<(const Eval & other) const {
+    // neither has a forced mate
+    if (!forcedMate && !other.forcedMate) {
+        return eval < other.eval;
+    // both have a forced mate
+    } else if (forcedMate && other.forcedMate) {
+        // both mates are the same color
+        if (winner == other.winner) {
+            // the longer mate is less
+            return plyToMate > other.plyToMate;
+        } else {
+            // the black mate is less
+            return !winner;
         }
+    // this has a forced mate
+    } else if (forcedMate) {
+        // the forced mate is less if it is black
+        return !winner;
+    // other has a forced mate
+    } else {
+        return other.winner;
     }
-    return whiteMaterial - blackMaterial;
+}
+
+ostream & operator<<(ostream & out, const Eval & eval) {
+    out << eval.toString();
+    return out;
 }

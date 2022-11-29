@@ -4,6 +4,7 @@
 #include <map>
 #include "Piece.h"
 #include "Move.h"
+#include "Eval.h"
 
 /**
  * @brief A class representing a chess board
@@ -272,9 +273,9 @@ public:
     /**
      * @brief Evaluates the position (no depth)
      * 
-     * @return double The evaluation of the position
+     * @return Eval The evaluation of the position
      */
-    double evaluate() const;
+    Eval evaluate() const;
 };
 
 /**

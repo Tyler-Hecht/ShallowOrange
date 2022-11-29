@@ -13,41 +13,17 @@ private:
     Board board;
     double randomness; // alters the evaluation function by up to this amount in either direction randomly
     std::vector<std::string> moves;
-    std::map<std::string, double> * evals; // stores evals so they can be determined faster later
-    std::map<std::string, std::vector<Move>> * allMovesMap; // stores all possible moves from a position so they can be determined faster later
 public:
     Game() {
         board = Board();
         board.setup();
         randomness = 0;
-        evals = new std::map<std::string, double>();
-        allMovesMap = new std::map<std::string, std::vector<Move>>();
     }
     Game(double randomness) {
         std::srand(time(NULL));
         board = Board();
         board.setup();
         this->randomness = randomness;
-        evals = new std::map<std::string, double>();
-        allMovesMap = new std::map<std::string, std::vector<Move>>();
-    }
-    ~Game() {
-        delete evals;
-        delete allMovesMap;
-    }
-    Game(const Game & other) {
-        board = Board(other.board);
-        moves = other.moves;
-        evals = new std::map<std::string, double>(*other.evals);
-        allMovesMap = new std::map<std::string, std::vector<Move>>(*other.allMovesMap);
-    }
-    Game & operator=(const Game & other) {
-        board = Board(other.board);
-        moves = other.moves;
-        randomness = other.randomness;
-        evals = new std::map<std::string, double>(*other.evals);
-        allMovesMap = new std::map<std::string, std::vector<Move>>(*other.allMovesMap);
-        return *this;
     }
     
     /**
