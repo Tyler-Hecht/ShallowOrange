@@ -89,31 +89,59 @@ void Board::setup() {
     readFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 }
 
-void Board::print(bool withCoords) const {
-    if (withCoords) {
-        cout << "  a b c d e f g h" << endl;
-    }
-    for (string rank : {"8", "7", "6", "5", "4", "3", "2", "1"}) {
+void Board::print(bool withCoords, bool pov) const {
+    if (pov) {
         if (withCoords) {
-            cout << rank << " ";
+            cout << "  a b c d e f g h" << endl;
         }
-        for (string file : {"a", "b", "c", "d", "e", "f", "g", "h"}) {
-            Piece * piece = getPiece(file + rank);
-            if (piece != NULL) {
-                cout << *piece;
+        for (string rank : {"8", "7", "6", "5", "4", "3", "2", "1"}) {
+            if (withCoords) {
+                cout << rank << " ";
             }
-            else {
+            for (string file : {"a", "b", "c", "d", "e", "f", "g", "h"}) {
+                Piece * piece = getPiece(file + rank);
+                if (piece != NULL) {
+                    cout << *piece;
+                }
+                else {
+                    cout << " ";
+                }
                 cout << " ";
             }
-            cout << " ";
+            if (withCoords) {
+                cout << rank;
+            }
+            cout << endl;
         }
         if (withCoords) {
-            cout << " " << rank;
+            cout << "  a b c d e f g h" << endl;
         }
-        cout << endl;
-    }
-    if (withCoords) {
-        cout << "  a b c d e f g h" << endl;
+    } else {
+        if (withCoords) {
+            cout << "  h g f e d c b a" << endl;
+        }
+        for (string rank : {"1", "2", "3", "4", "5", "6", "7", "8"}) {
+            if (withCoords) {
+                cout << rank << " ";
+            }
+            for (string file : {"h", "g", "f", "e", "d", "c", "b", "a"}) {
+                Piece * piece = getPiece(file + rank);
+                if (piece != NULL) {
+                    cout << *piece;
+                }
+                else {
+                    cout << " ";
+                }
+                cout << " ";
+            }
+            if (withCoords) {
+                cout << rank;
+            }
+            cout << endl;
+        }
+        if (withCoords) {
+            cout << "  h g f e d c b a" << endl;
+        }
     }
 }
 

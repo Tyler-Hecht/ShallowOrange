@@ -133,7 +133,7 @@ void Game::generateDeepGame(int depth, bool print) {
 
 void Game::playGame(int depth, bool yourColor) {
     MoveTree tree;
-    board.print();
+    board.print(false, yourColor);
     while (true) {
         if (board.getResult() != 0) {
             cout << getResult() << endl;
@@ -149,13 +149,13 @@ void Game::playGame(int depth, bool yourColor) {
                 cin >> moveString;
             }
             makeMove(move);
-            board.print();
+            board.print(false, yourColor);
         } else {
             cout << "Thinking..." << endl;
             tree = MoveTree(board, depth, randomness);
             Move move = tree.getBestMove();
             makeMove(move);
-            board.print();
+            board.print(false, yourColor);
             cout << move << endl;
         }
     }

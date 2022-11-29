@@ -33,7 +33,13 @@ public:
     Board(const Board & board);
     Board & operator=(const Board & other);
     void setup();
-    void print(bool withCoords = false) const;
+    /**
+     * @brief Prints the board onscreen
+     * 
+     * @param withCoords Whether to print the coordinates on the side
+     * @param pov The point of view to print the board from (true for white, false for black)
+     */
+    void print(bool withCoords = false, bool pov = true) const;
     /**
      * @brief Makes a move on the board, updating relevant member variables
      * 
