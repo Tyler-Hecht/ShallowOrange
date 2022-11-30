@@ -220,10 +220,10 @@ void Board::makeMove(Move & move, bool update) {
     // determines new en passant square
     if (move.getPiece() == 'P') {
         if (move.getFrom()[1] == '2' && move.getTo()[1] == '4') {
-            enPassant = move.getFrom()[0] + "3";
+            enPassant = string(1, move.getFrom()[0]) + "3";
         }
         else if (move.getFrom()[1] == '7' && move.getTo()[1] == '5') {
-            enPassant = move.getFrom()[0] + "6";
+            enPassant = string(1, move.getFrom()[0]) + "6";
         }
         else {
             enPassant = "";
@@ -709,7 +709,7 @@ void Board::readFEN(string fen) {
     }
     i++;
     if (fen[i] != '-') {
-        enPassant = fen[i] + fen[i + 1];
+        enPassant = string(1, fen[i]) + string(1, fen[i+1]);
         i += 2;
     } else {
         enPassant = "";
