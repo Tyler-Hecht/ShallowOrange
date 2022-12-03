@@ -33,51 +33,39 @@ void MoveTree::deleteTree(MoveNode * subroot) {
     }
 }
 
-Eval MoveTree::getBestEval(MoveNode * subroot) const {
+pair<Eval, Move> MoveTree::getBestEval(MoveNode * subroot) const {
     if (subroot->isLeaf) {
         Eval eval = subroot->eval;
         eval.incrementMate();
-        return eval;
+        return pair(eval, subroot->move);
     }
     Eval bestEval;
+    Move bestMove;
     if (subroot->board.getTurn()) {
         bestEval = Eval(0, false);
     } else {
         bestEval = Eval(0, true);
     }
     for (int i = 0; i < subroot->lines.size(); i++) {
-        Eval eval = getBestEval(subroot->lines[i]);
+        Eval eval = getBestEval(subroot->lines[i]).first;
+        Move move = subroot->lines[i]->move;
         if (subroot->board.getTurn()) {
             if (eval > bestEval) {
                 bestEval = eval;
+                bestMove = move;
             }
         } else {
             if (eval < bestEval) {
                 bestEval = eval;
+                bestMove = move;
             }
         }
     }
     // increase moves to mate
     bestEval.incrementMate();
-    return bestEval;
+    return pair(bestEval, bestMove);
 }
 
 Move MoveTree::getBestMove() const {
-    Move bestMove = root->lines[0]->move;
-    Eval bestEval = getBestEval(root->lines[0]);
-    for (int i = 1; i < root->lines.size(); i++) {
-        Eval eval = getBestEval(root->lines[i]);
-        if (root->board.getTurn()) {
-            if (eval > bestEval) {
-                bestEval = eval;
-                bestMove = root->lines[i]->move;
-            }
-        } else {
-            if (eval < bestEval) {
-                bestEval = eval;
-                bestMove = root->lines[i]->move;
-            }
-        }
-    }
-    return bestMove;
+    return getBestEval(root).second;
 }

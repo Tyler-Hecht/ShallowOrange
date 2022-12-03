@@ -50,9 +50,9 @@ private:
      * @brief Gets the best eval from a subtree using minimax
      * 
      * @param subroot The root of the subtree to search
-     * @return double The best eval from the subtree
+     * @return pair<Eval, Move> The best eval and most from the subtree
      */
-    Eval getBestEval(MoveNode * subroot) const;
+    std::pair<Eval, Move> getBestEval(MoveNode * subroot) const;
 public:
     MoveTree() {
         root = nullptr;
