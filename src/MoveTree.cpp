@@ -33,8 +33,8 @@ void MoveTree::deleteTree(MoveNode * subroot) {
     }
 }
 
-pair<Eval, Move> MoveTree::getBestEval(MoveNode * subroot) const {
-    if (subroot->isLeaf) {
+pair<Eval, Move> MoveTree::getBestEval(MoveNode * subroot, int currDepth, Eval alpha, Eval beta) const {
+    if (subroot->isLeaf || currDepth == depth) {
         Eval eval = subroot->eval;
         eval.incrementMate();
         return pair(eval, subroot->move);
@@ -43,29 +43,43 @@ pair<Eval, Move> MoveTree::getBestEval(MoveNode * subroot) const {
     Move bestMove;
     if (subroot->board.getTurn()) {
         bestEval = Eval(0, false);
-    } else {
-        bestEval = Eval(0, true);
-    }
-    for (int i = 0; i < subroot->lines.size(); i++) {
-        Eval eval = getBestEval(subroot->lines[i]).first;
-        Move move = subroot->lines[i]->move;
-        if (subroot->board.getTurn()) {
+         for (int i = 0; i < subroot->lines.size(); i++) {
+            Eval eval = getBestEval(subroot->lines[i], currDepth + 1, alpha, beta).first;
+            Move move = subroot->lines[i]->move;
             if (eval > bestEval) {
                 bestEval = eval;
                 bestMove = move;
             }
-        } else {
+            if (eval > alpha) {
+                alpha = eval;
+            }
+            if (beta <= alpha) {
+                break;
+            }
+        }
+    } else {
+        bestEval = Eval(0, true);
+        for (int i = 0; i < subroot->lines.size(); i++) {
+            Eval eval = getBestEval(subroot->lines[i], currDepth + 1, alpha, beta).first;
+            Move move = subroot->lines[i]->move;
             if (eval < bestEval) {
                 bestEval = eval;
                 bestMove = move;
             }
+            if (eval < beta) {
+                beta = eval;
+            }
+            if (beta <= alpha) {
+                break;
+            }
         }
     }
+
     // increase moves to mate
     bestEval.incrementMate();
     return pair(bestEval, bestMove);
 }
 
 Move MoveTree::getBestMove() const {
-    return getBestEval(root).second;
+    return getBestEval(root, 0, Eval(0, false), Eval(0, true)).second;
 }

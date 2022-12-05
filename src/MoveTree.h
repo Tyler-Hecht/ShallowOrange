@@ -47,12 +47,15 @@ private:
     void deleteTree(MoveNode * subroot);
 
     /**
-     * @brief Gets the best eval from a subtree using minimax
+     * @brief Gets the best eval from a subtree using minimax with alpha-beta pruning
      * 
      * @param subroot The root of the subtree to search
+     * @param depth The current depth of the search
+     * @param alpha The alpha value for alpha-beta pruning
+     * @param beta The beta value for alpha-beta pruning
      * @return pair<Eval, Move> The best eval and most from the subtree
      */
-    std::pair<Eval, Move> getBestEval(MoveNode * subroot) const;
+    std::pair<Eval, Move> getBestEval(MoveNode * subroot, int currDepth, Eval alpha, Eval beta) const;
 public:
     MoveTree() {
         root = nullptr;
@@ -72,7 +75,7 @@ public:
     }
     /**
      * @brief Gets the best move at the depth of the tree
-     * Uses a minimax algorithm
+     * Uses a minimax algorithm with alpha-beta pruing
      * 
      * @return Move The best move
      */
