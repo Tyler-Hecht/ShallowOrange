@@ -3,23 +3,17 @@
 
 using namespace std;
 
-void MoveTree::generateTree(MoveNode * subroot, int depth) {
-    if (depth == 0) {
-        return;
-    }
-    std::vector<Move> moves = subroot->board.getAllMoves();
+void MoveTree::MoveNode::calculateLines(double randomness) {
+    std::vector<Move> moves = board.getAllMoves();
     for (int i = 0; i < moves.size(); i++) {
-        Board tmp = Board(subroot->board);
+        Board tmp = Board(board);
         tmp.makeMove(moves[i], true);
         MoveNode * node = new MoveNode(moves[i], tmp);
-        string fen = tmp.writeFEN();
         double adjustment = (rand() % 2) - 1;
         node->eval = tmp.evaluate() + adjustment * randomness;
         node->board = tmp;
         node->move = moves[i];
-        subroot->lines.push_back(node);
-        subroot->isLeaf = false;
-        generateTree(node, depth - 1);
+        lines.push_back(node);
     }
 }
 
@@ -34,13 +28,22 @@ void MoveTree::deleteTree(MoveNode * subroot) {
 }
 
 pair<Eval, Move> MoveTree::getBestEval(MoveNode * subroot, int currDepth, Eval alpha, Eval beta) const {
-    if (subroot->isLeaf || currDepth == depth) {
+    //reached depth limit
+    if (currDepth == depth) {
         Eval eval = subroot->eval;
         eval.incrementMate();
         return pair(eval, subroot->move);
     }
     Eval bestEval;
     Move bestMove;
+    subroot->calculateLines(randomness);
+    //no moves
+    if (subroot->lines.size() == 0) {
+        bestEval = subroot->eval;
+        bestEval.incrementMate();
+        return pair(bestEval, subroot->move);
+    }
+    //minimax with alpha-beta pruning
     if (subroot->board.getTurn()) {
         bestEval = Eval(0, false);
          for (int i = 0; i < subroot->lines.size(); i++) {
@@ -75,7 +78,7 @@ pair<Eval, Move> MoveTree::getBestEval(MoveNode * subroot, int currDepth, Eval a
         }
     }
 
-    // increase moves to mate
+    // increase moves to mate if applicable
     bestEval.incrementMate();
     return pair(bestEval, bestMove);
 }

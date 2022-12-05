@@ -16,29 +16,21 @@ private:
         Board board;
         std::vector<MoveNode*> lines;
         Eval eval;
-        bool isLeaf;
         MoveNode(Move move, Board board) {
             this->move = move;
             this->board = board;
-            this->isLeaf = true;
         }
         ~MoveNode() {
             for (int i = 0; i < lines.size(); i++) {
                 delete lines[i];
             }
         }
+        void calculateLines(double randomness);
     };
     MoveNode * root;
     int depth;
     double randomness;
-    
-    /**
-     * @brief Generates a tree of possible moves from a given position
-     * 
-     * @param subroot The root of the subtree to generate
-     * @param depth The depth of the subtree to generate
-     */
-    void generateTree(MoveNode * subroot, int depth);
+
     /**
      * @brief Deletes a tree of moves
      * 
@@ -57,18 +49,14 @@ private:
      */
     std::pair<Eval, Move> getBestEval(MoveNode * subroot, int currDepth, Eval alpha, Eval beta) const;
 public:
-    MoveTree() {
-        root = nullptr;
-        depth = 0;
-        randomness = 0;
-    }
+    MoveTree() : root(nullptr), depth(0), randomness(0) {}
     MoveTree(Board board, int depth, double randomness = 0) {
         srand(time(NULL));
-        Board board_ = Board(board);
-        root = new MoveNode(Move(), board_);
+        root = new MoveNode(Move(), Board(board));
+        root->eval = board.evaluate();
         this->depth = depth;
         this->randomness = randomness;
-        generateTree(root, depth);
+        //generateTree(root, depth);
     }
     ~MoveTree() {
         deleteTree(root);
