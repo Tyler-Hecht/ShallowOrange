@@ -1,0 +1,21 @@
+# GAME SETTINGS
+
+# W for white, B for black
+color: W
+
+# A depth of more than 3 may take a long time to compute
+depth: 3
+
+# The evaluation of a position is adjusted by a maximum of this value in either direction
+randomness: 0
+
+# AESTHETIC SETTINGS
+
+# whether to show the board after each move (Y or N)
+show_board: Y
+
+# show coordinate on the side of the board (Y or N)
+show_coords: N
+
+# the perspective that the board is viewed from (recommended to be the same as color)
+pov: W

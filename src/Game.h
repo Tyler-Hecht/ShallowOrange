@@ -89,7 +89,10 @@ public:
      * @brief A game of chess where you play against the engine
      * 
      * @param depth The depth of the engine
+     * @param print Whether to print the board after each move
      * @param yourColor Whether you are white (true) or black (false)
+     * @param pov What perspective to print the board from (true = white, false = black)
+     * @param coords Whether to print the coordinates when printing the board
      */
-    void playGame(int depth = 3, bool yourColor = true);
+    void playGame(int depth = 3, bool print = true, bool yourColor = true, bool pov = true, bool coords = false);
 };
