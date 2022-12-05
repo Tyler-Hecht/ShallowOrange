@@ -9,4 +9,4 @@ Best chess.com bot beaten: Juan (400)
 To be implemented:\
 -Opening book\
 -Config file\
--Optimized calculations
+-More sophisticated board evaluation

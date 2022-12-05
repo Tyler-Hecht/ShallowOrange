@@ -1,2 +1,5 @@
 .vscode
 main.exe
+test.bat
+tester.exe
+src/test.cpp
