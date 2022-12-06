@@ -23,11 +23,6 @@ private:
             this->move = move;
             this->board = board;
         }
-        ~MoveNode() {
-            for (int i = 0; i < lines.size(); i++) {
-                delete lines[i];
-            }
-        }
         /**
          * @brief Generates the lines from the node's position (also calculates evals)
          * 

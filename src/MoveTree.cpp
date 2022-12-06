@@ -18,13 +18,10 @@ void MoveTree::MoveNode::calculateLines(double randomness) {
 }
 
 void MoveTree::deleteTree(MoveNode * subroot) {
-    if (subroot->lines.size() == 0) {
-        return;
-    } else {
-        for (int i = 0; i < subroot->lines.size(); i++) {
-            deleteTree(subroot->lines[i]);
-        }
+    for (int i = 0; i < subroot->lines.size(); i++) {
+        deleteTree(subroot->lines[i]);
     }
+    delete subroot;
 }
 
 pair<Eval, Move> MoveTree::getBestEval(MoveNode * subroot, int currDepth, Eval alpha, Eval beta) const {

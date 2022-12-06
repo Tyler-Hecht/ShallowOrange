@@ -83,6 +83,9 @@ Move Game::getBestMove() {
 }
 
 void Game::generateRandomGame(bool print) {
+    if (print) {
+        board.print();
+    }
     while (true) {
         vector<Move> moves = board.getAllMoves();
         if (board.getResult() != 0) {
@@ -100,6 +103,9 @@ void Game::generateRandomGame(bool print) {
 }
 
 void Game::generateGreedyGame(bool print) {
+    if (print) {
+        board.print();
+    }
     while (true) {
         if (board.getResult() != 0) {
             cout << getResult() << endl;
@@ -115,9 +121,11 @@ void Game::generateGreedyGame(bool print) {
 }
 
 void Game::generateDeepGame(int depth, bool print) {
-    MoveTree tree;
+    if (print) {
+        board.print();
+    }
     while (true) {
-        tree = MoveTree(board, depth, randomness);
+        MoveTree tree = MoveTree(board, depth, randomness);
         if (board.getResult() != 0) {
             cout << getResult() << endl;
             break;
@@ -132,8 +140,9 @@ void Game::generateDeepGame(int depth, bool print) {
 }
 
 void Game::playGame(int depth, bool print, bool yourColor, bool pov, bool coords) {
-    MoveTree tree;
-    board.print(false, yourColor);
+    if (print) {
+        board.print(coords, pov);
+    }
     while (true) {
         if (board.getResult() != 0) {
             cout << getResult() << endl;
@@ -154,7 +163,7 @@ void Game::playGame(int depth, bool print, bool yourColor, bool pov, bool coords
             }
         } else {
             cout << "Thinking..." << endl;
-            tree = MoveTree(board, depth, randomness);
+            MoveTree tree = MoveTree(board, depth, randomness);
             Move move = tree.getBestMove();
             makeMove(move);
             if (print) {
