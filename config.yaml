@@ -9,7 +9,7 @@ depth: 3
 # The evaluation of a position is adjusted by a maximum of this value in either direction
 randomness: 0
 
-# AESTHETIC SETTINGS
+# VISUAL SETTINGS
 
 # whether to show the board after each move (Y or N)
 show_board: Y
