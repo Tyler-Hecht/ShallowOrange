@@ -11,11 +11,33 @@ class Piece {
     bool color; //0 for black, 1 for white
 public:
     Piece() : symbol('\0'), color(false) {}
+    /**
+     * @brief Piece constructor
+     * 
+     * @param symbol_ The symbol of the piece (see above)
+     * @param color_ The color of the piece (see above)
+     */
     Piece(char symbol_, bool color_) : symbol(symbol_), color(color_) {}
+    /**
+     * @brief Getter for the symbol
+     * 
+     * @return char The symbol of the piece
+     */
     char getSymbol() const {
         return symbol;
     }
+    /**
+     * @brief Gets the color of the piece
+     * 
+     * @return bool The color of the piece (see above)
+     */
     bool getColor() const { return color; }
+    /**
+     * @brief Promotes a pawn
+     * 
+     * @param symbol_ The symbol of the piece to promote to
+     *
+     */
     void promote(char symbol_) {
         if (symbol == 'P') {
             symbol = symbol_;

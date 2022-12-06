@@ -34,15 +34,15 @@ pair<Eval, Move> MoveTree::getBestEval(MoveNode * subroot, int currDepth, Eval a
         eval.incrementMate();
         return pair(eval, subroot->move);
     }
-    Eval bestEval;
-    Move bestMove;
     subroot->calculateLines(randomness);
+    Eval bestEval;
     //no moves
     if (subroot->lines.size() == 0) {
         bestEval = subroot->eval;
         bestEval.incrementMate();
         return pair(bestEval, subroot->move);
     }
+    Move bestMove = subroot->lines[0]->move;
     //minimax with alpha-beta pruning
     if (subroot->board.getTurn()) {
         bestEval = Eval(0, false);

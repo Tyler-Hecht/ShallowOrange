@@ -10,15 +10,23 @@
  */
 class Game {
 private:
-    Board board;
+    Board board; // The current position
     double randomness; // alters the evaluation function by up to this amount in either direction randomly
     std::vector<std::string> moves;
 public:
+    /**
+     * @brief Default constructor for Game (zero randomness)
+     */
     Game() {
         board = Board();
         board.setup();
         randomness = 0;
     }
+    /**
+     * @brief Game constructor
+     * 
+     * @param randomness The amount of randomness to add to the evals (see above)
+     */
     Game(double randomness) {
         std::srand(time(NULL));
         board = Board();

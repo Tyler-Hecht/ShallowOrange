@@ -11,11 +11,14 @@
  */
 class MoveTree {
 private:
+    /**
+     * @brief A struct representing a node (position) in the tree
+     */
     struct MoveNode {
-        Move move;
-        Board board;
-        std::vector<MoveNode*> lines;
-        Eval eval;
+        Move move; // The move that got to this position
+        Board board; // The board
+        std::vector<MoveNode*> lines; // The possible lines from this position
+        Eval eval; // The board's evaluation
         MoveNode(Move move, Board board) {
             this->move = move;
             this->board = board;
@@ -25,11 +28,16 @@ private:
                 delete lines[i];
             }
         }
+        /**
+         * @brief Generates the lines from the node's position (also calculates evals)
+         * 
+         * @param randomness The amount of randomness to add to the evals
+         */
         void calculateLines(double randomness);
     };
-    MoveNode * root;
-    int depth;
-    double randomness;
+    MoveNode * root; // The root of the tree
+    int depth; // The maximum depth of the tree
+    double randomness; // The amount of randomness to add to the evals (see Game class)
 
     /**
      * @brief Deletes a tree of moves
@@ -49,7 +57,17 @@ private:
      */
     std::pair<Eval, Move> getBestEval(MoveNode * subroot, int currDepth, Eval alpha, Eval beta) const;
 public:
+    /**
+     * @brief Default constructor for MoveTree (idk why you would use this)
+     */
     MoveTree() : root(nullptr), depth(0), randomness(0) {}
+    /**
+     * @brief MoveTree constructor
+     * 
+     * @param board The board from which to generate the tree
+     * @param depth The depth to search (must be at least 1)
+     * @param randomness The amount of randomness to add to the evals (see Game class)
+     */
     MoveTree(Board board, int depth, double randomness = 0) {
         srand(time(NULL));
         root = new MoveNode(Move(), Board(board));

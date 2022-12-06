@@ -28,10 +28,16 @@ class Board {
     int result; // see updateResult() for details
     int phase; // 0 for opening, 1 for middle game, 2 for endgame
 public:
+    /**
+     * @brief Default constructor for Board (empty board)
+     */
     Board();
     ~Board();
     Board(const Board & board);
     Board & operator=(const Board & other);
+    /**
+     * @brief Sets up the board to the standard starting position
+     */
     void setup();
     /**
      * @brief Prints the board onscreen
