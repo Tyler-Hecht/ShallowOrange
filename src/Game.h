@@ -23,7 +23,6 @@ public:
         std::srand(time(NULL));
         board = Board();
         board.setup();
-        board.readFEN("2kr3r/pp2q2p/8/2pp1PPP/3p4/P2P3R/1K2Nb2/1RB2B2 b - - 0 25");
         this->randomness = randomness;
     }
     
