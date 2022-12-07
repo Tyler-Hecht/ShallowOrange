@@ -667,6 +667,10 @@ bool Board::readMove(string str, Move & move) const {
 }
 
 void Board::readFEN(string fen) {
+    // clear board
+    Board tmp = Board();
+    *this = tmp;
+    // read FEN
     int rank = 7;
     int file = 0;
     int i = 0;

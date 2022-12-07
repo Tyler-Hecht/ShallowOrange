@@ -69,7 +69,6 @@ public:
         root->eval = board.evaluate();
         this->depth = depth;
         this->randomness = randomness;
-        //generateTree(root, depth);
     }
     ~MoveTree() {
         deleteTree(root);

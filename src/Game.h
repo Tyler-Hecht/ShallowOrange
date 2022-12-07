@@ -15,22 +15,15 @@ private:
     std::vector<std::string> moves;
 public:
     /**
-     * @brief Default constructor for Game (zero randomness)
-     */
-    Game() {
-        board = Board();
-        board.setup();
-        randomness = 0;
-    }
-    /**
      * @brief Game constructor
      * 
      * @param randomness The amount of randomness to add to the evals (see above)
      */
-    Game(double randomness) {
+    Game(double randomness = 0) {
         std::srand(time(NULL));
         board = Board();
         board.setup();
+        board.readFEN("2kr3r/pp2q2p/8/2pp1PPP/3p4/P2P3R/1K2Nb2/1RB2B2 b - - 0 25");
         this->randomness = randomness;
     }
     
