@@ -418,7 +418,7 @@ vector<Move> Board::getPawnMoves(string square) const {
     // move forward
     if (getPiece(asString(file, rank + colorMultiplier)) == NULL) {
         // promotion
-        if (color && rank == 6 || !color && rank == 1) {
+        if ((color && rank == 6 ) || (!color && rank == 1)) {
             moves.push_back(Move('P', square, asString(file, rank + colorMultiplier), false, true, 'Q'));
             moves.push_back(Move('P', square, asString(file, rank + colorMultiplier), false, true, 'R'));
             moves.push_back(Move('P', square, asString(file, rank + colorMultiplier), false, true, 'B'));
@@ -434,7 +434,7 @@ vector<Move> Board::getPawnMoves(string square) const {
     // capture left
     if (file > 0 && getPiece(asString(file-1,rank+colorMultiplier)) != NULL && getPiece(asString(file-1,rank+colorMultiplier))->getColor() != color) {
         // promotion
-        if (color && rank == 6 || !color && rank == 1) {
+        if ((color && rank == 6) || (!color && rank == 1)) {
             moves.push_back(Move('P', square, asString(file - 1, rank + colorMultiplier), true, true, 'Q'));
             moves.push_back(Move('P', square, asString(file - 1, rank + colorMultiplier), true, true, 'R'));
             moves.push_back(Move('P', square, asString(file - 1, rank + colorMultiplier), true, true, 'B'));
@@ -446,7 +446,7 @@ vector<Move> Board::getPawnMoves(string square) const {
     // capture right
     if (file < 7 && getPiece(asString(file+1,rank+colorMultiplier)) != NULL && getPiece(asString(file+1, rank+colorMultiplier))->getColor() != color) {
         // promotion
-        if (color && rank == 6 || !color && rank == 1) {
+        if ((color && rank == 6) || (!color && rank == 1)) {
             moves.push_back(Move('P', square, asString(file + 1, rank + colorMultiplier), true, true, 'Q'));
             moves.push_back(Move('P', square, asString(file + 1, rank + colorMultiplier), true, true, 'R'));
             moves.push_back(Move('P', square, asString(file + 1, rank + colorMultiplier), true, true, 'B'));
@@ -482,7 +482,7 @@ vector<Move> Board::getNBRQMoves(string square, char symbol) const {
         vector<string> tmp = rbSquares(square, false);
         squares.insert(squares.end(), tmp.begin(), tmp.end());
     }
-    for (int i = 0; i < squares.size(); i++) {
+    for (size_t i = 0; i < squares.size(); i++) {
         if (getPiece(squares[i]) == NULL) {
             moves.push_back(Move(symbol, square, squares[i]));
         } else if (getPiece(squares[i])->getColor() != color) {
@@ -496,7 +496,7 @@ vector<Move> Board::getKingMoves(string square) const {
     vector<Move> moves;
     bool color = getPiece(square)->getColor();
     vector<pair<int, int>> offsets = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
-    for (int i = 0; i < offsets.size(); i++) {
+    for (size_t i = 0; i < offsets.size(); i++) {
         int file = square[0] - 'a' + offsets[i].first;
         int rank = square[1] - '1' + offsets[i].second;
         if (file >= 0 && file <= 7 && rank >= 0 && rank <= 7) {
@@ -569,7 +569,7 @@ vector<Move> Board::getMoves(string square) const {
         }
     }
     // add check to moves
-    for (int i = 0; i < legalMoves.size(); i++) {
+    for (size_t i = 0; i < legalMoves.size(); i++) {
         Board tmp = Board(*this);
         tmp.makeMove(legalMoves[i]);
         if (tmp.inCheck(tmp.turn, tmp.findKing(tmp.turn))) {
@@ -591,11 +591,11 @@ vector<Move> Board::getAllMoves() const {
         }
     }
     // handle disambiguation
-    for (int i = 0; i < moves.size(); i++) {
+    for (size_t i = 0; i < moves.size(); i++) {
         // this will hold the indices in moves that need disambiguation
-        vector<int> disamb = {i};
+        vector<int> disamb = {(int) i};
         // find all moves with the same destination
-        for (int j = i + 1; j < moves.size(); j++) {
+        for (size_t j = i + 1; j < moves.size(); j++) {
             if (moves[i].getTo() == moves[j].getTo() && moves[i].getPiece() == moves[j].getPiece()) {
                 disamb.push_back(j);
             }
@@ -604,8 +604,8 @@ vector<Move> Board::getAllMoves() const {
             bool differentFiles = true;
             bool differentRanks = true;
             // check if any moves have the same file or rank
-            for (int j = 0; j < disamb.size(); j++) {
-                for (int k = j + 1; k < disamb.size(); k++) {
+            for (size_t j = 0; j < disamb.size(); j++) {
+                for (size_t k = j + 1; k < disamb.size(); k++) {
                     if (moves[disamb[j]].getFrom()[0] == moves[disamb[k]].getFrom()[0]) {
                         differentFiles = false;
                     }
@@ -615,8 +615,8 @@ vector<Move> Board::getAllMoves() const {
                 }
             }
             // disambiguate
-            for (int j = 0; j < disamb.size(); j++) {
-                if (differentFiles && !differentRanks || differentFiles && differentRanks) {
+            for (size_t j = 0; j < disamb.size(); j++) {
+                if ((differentFiles && !differentRanks) || (differentFiles && differentRanks)) {
                     moves[disamb[j]].setDisambiguation(string(1, moves[disamb[j]].getFrom()[0]));
                 }
                 else if (!differentFiles && differentRanks) {
@@ -728,7 +728,7 @@ void Board::readFEN(string fen) {
     halfmoveClock = stoi(halfmove);
     i++;
     string fullmove = "";
-    while (i < fen.length()) {
+    while (i < (int) fen.length()) {
         fullmove += fen[i];
         i++;
     }

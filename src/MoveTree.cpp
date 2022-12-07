@@ -5,7 +5,7 @@ using namespace std;
 
 void MoveTree::MoveNode::calculateLines(double randomness) {
     std::vector<Move> moves = board.getAllMoves();
-    for (int i = 0; i < moves.size(); i++) {
+    for (size_t i = 0; i < moves.size(); i++) {
         Board tmp = Board(board);
         tmp.makeMove(moves[i], true);
         MoveNode * node = new MoveNode(moves[i], tmp);
@@ -18,7 +18,7 @@ void MoveTree::MoveNode::calculateLines(double randomness) {
 }
 
 void MoveTree::deleteTree(MoveNode * subroot) {
-    for (int i = 0; i < subroot->lines.size(); i++) {
+    for (size_t i = 0; i < subroot->lines.size(); i++) {
         deleteTree(subroot->lines[i]);
     }
     delete subroot;
@@ -43,7 +43,7 @@ pair<Eval, Move> MoveTree::getBestEval(MoveNode * subroot, int currDepth, Eval a
     //minimax with alpha-beta pruning
     if (subroot->board.getTurn()) {
         bestEval = Eval(0, false);
-         for (int i = 0; i < subroot->lines.size(); i++) {
+         for (size_t i = 0; i < subroot->lines.size(); i++) {
             Eval eval = getBestEval(subroot->lines[i], currDepth + 1, alpha, beta).first;
             Move move = subroot->lines[i]->move;
             if (eval > bestEval) {
@@ -59,7 +59,7 @@ pair<Eval, Move> MoveTree::getBestEval(MoveNode * subroot, int currDepth, Eval a
         }
     } else {
         bestEval = Eval(0, true);
-        for (int i = 0; i < subroot->lines.size(); i++) {
+        for (size_t i = 0; i < subroot->lines.size(); i++) {
             Eval eval = getBestEval(subroot->lines[i], currDepth + 1, alpha, beta).first;
             Move move = subroot->lines[i]->move;
             if (eval < bestEval) {

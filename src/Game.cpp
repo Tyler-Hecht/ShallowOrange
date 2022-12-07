@@ -32,7 +32,7 @@ string Game::getResult() const {
 
 string Game::getPGN() const {
     string PGN = "";
-    for (int i = 0; i < moves.size(); i++) {
+    for (size_t i = 0; i < moves.size(); i++) {
         if (i % 2 == 0) {
             PGN += to_string(i / 2 + 1) + ". ";
         }
@@ -58,7 +58,7 @@ Move Game::getBestMove() {
     Board tmp;
     Move bestMove;
     Eval bestEval = board.getTurn() ? Eval(0, false) : Eval(0, true);
-    for (int i = 0; i < moves.size(); i++) {
+    for (size_t i = 0; i < moves.size(); i++) {
         // evaluate the move
         Move move = moves[i];
         tmp = Board(board);

@@ -14,7 +14,7 @@ vector<char> readConfig(string filename) {
             continue;
         }
         istringstream iss(line);
-        for (int i = 0; i < line.length(); i++) {
+        for (size_t i = 0; i < line.length(); i++) {
             if (line[i] == ':') {
                 config.push_back(line[i + 2]);
                 break;

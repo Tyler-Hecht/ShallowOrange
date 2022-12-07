@@ -93,15 +93,6 @@ public:
         }
     }
 
-    // overloading assignment operator
-    Eval & operator=(const Eval & other) {
-        eval = other.eval;
-        forcedMate = other.forcedMate;
-        plyToMate = other.plyToMate;
-        winner = other.winner;
-        return *this;
-    }
-
     // increase mate in x by 1
     void incrementMate() {
         if (forcedMate) {
