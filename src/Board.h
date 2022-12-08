@@ -22,6 +22,7 @@ class Board {
     bool canCastleQueensideWhite;
     bool canCastleKingsideBlack;
     bool canCastleQueensideBlack;
+    std::string whiteKingSquare, blackKingSquare;
     int halfmoveClock;
     int fullmoveNumber;
     std::map<std::string, int> FENcounter;
@@ -41,7 +42,7 @@ public:
     *
     * @param board The board to copy
     */
-    Board(const Board & board);
+    Board(const Board & other);
     /**
     * @brief Assignment operator overload for Board
     *
