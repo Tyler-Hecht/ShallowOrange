@@ -7,6 +7,7 @@
 /**
  * @brief A class representing the evaluation of a position
  * This allows for mate in x to be represented
+ * Behaves mostly like a double otherwise
  */
 class Eval {
 private:
@@ -15,11 +16,26 @@ private:
     int plyToMate; // positive for white mate, negative for black mate
     bool winner; // true for white, false for black
 public:
+    /**
+    * @brief Default constructor for Eval (eval = 0)
+    */
     Eval() : eval(0), forcedMate(false), plyToMate(0), winner(false) {}
+    /**
+    * @brief Constructor for an Eval that isn't a forced mate
+    *
+    * @param eval_ The evaluation
+    */
     Eval(double eval_) : eval(eval_), forcedMate(false), plyToMate(0), winner(false) {}
+    /**
+    * @brief Constructor for an Eval that is a forced mate
+    *
+    * @param plyToMate_ The number of ply until checkmate
+    * @param winner_ The color doing the mating
+    */
     Eval(int plyToMate_, bool winner_) : eval(0), forcedMate(true), plyToMate(plyToMate_), winner(winner_) {}
     /**
      * @brief Converts the evaluation to a string
+     * Forced mate has a "-M"/"+M" (black/white) followed by the moves until mate
      * 
      * @param decimals The number of decimals to include
      * @return string The evaluation as a string
@@ -43,6 +59,7 @@ public:
     }
 
     // overloading comparison operators
+    // Forced mates are always better for the mating side than a non-forced mate eval
     bool operator==(const Eval & other) const {
         if (forcedMate != other.forcedMate) {
             return false;
@@ -70,6 +87,7 @@ public:
     }
 
     // overloading arithmetic operators
+    // If not a forced mate, the argument is added/subtracted from the Eval
     Eval operator+(double change) {
         if (!forcedMate) {
             return Eval(eval + change);
@@ -93,7 +111,9 @@ public:
         }
     }
 
-    // increase mate in x by 1
+    /**
+    * @brief Increases by one the ply until mate
+    */
     void incrementMate() {
         if (forcedMate) {
             plyToMate++;
@@ -102,4 +122,12 @@ public:
 
 };
 
+/**
+* @brief Overloads the << operator for Eval
+* Outputs the toString function's return
+*
+* @param out The ostream
+* @param eval the Eval
+* @return ostream The ostream
+*/
 std::ostream & operator<<(std::ostream & out, const Eval & eval);

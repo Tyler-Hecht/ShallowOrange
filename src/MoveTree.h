@@ -40,6 +40,13 @@ private:
      * @param subroot The root of the subtree to delete
      */
     void deleteTree(MoveNode * subroot);
+    /**
+    * @brief Copies a tree of moves
+    *
+    * @param subroot The root of the subtree to copy
+    * @return MoveNode * The copied MoveNode
+    */
+    MoveNode * copyTree(MoveNode * subroot);
 
     /**
      * @brief Gets the best eval from a subtree using minimax with alpha-beta pruning
@@ -70,8 +77,33 @@ public:
         this->depth = depth;
         this->randomness = randomness;
     }
+    /**
+    * @brief Destructor for MoveTree
+    */
     ~MoveTree() {
         deleteTree(root);
+    }
+    /**
+    * @brief Copy constructor for MoveTree
+    *
+    * @param other The MoveTree to copy
+    */
+    MoveTree(const MoveTree & other) {
+        depth = other.depth;
+        randomness = other.randomness;
+        root = copyTree(other.root);
+    }
+    /**
+    * @brief Assignment operator overload for MoveTree
+    *
+    * @param other The MoveTree to copy
+    */
+    MoveTree & operator=(const MoveTree & other) {
+        depth = other.depth;
+        randomness = other.randomness;
+        copyTree(other.root);
+        deleteTree(root);
+        return *this;
     }
     /**
      * @brief Gets the best move at the depth of the tree

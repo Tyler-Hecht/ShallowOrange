@@ -24,6 +24,15 @@ void MoveTree::deleteTree(MoveNode * subroot) {
     delete subroot;
 }
 
+MoveTree::MoveNode * MoveTree::copyTree(MoveNode * subroot) {
+    MoveNode * newSubroot = new MoveNode(*subroot);
+    newSubroot->lines = vector<MoveNode*>();
+    for (size_t i = 0; i < subroot->lines.size(); i++) {
+        newSubroot->lines.push_back(copyTree(subroot->lines[i]));
+    }
+    return newSubroot;
+}
+
 pair<Eval, Move> MoveTree::getBestEval(MoveNode * subroot, int currDepth, Eval alpha, Eval beta) const {
     //reached depth limit
     if (currDepth == depth) {

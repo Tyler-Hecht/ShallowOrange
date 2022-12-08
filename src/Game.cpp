@@ -92,7 +92,6 @@ void Game::generateRandomGame(bool print) {
             cout << getResult() << endl;
             break;
         }
-        srand(time(NULL));
         Move move = moves[rand() % moves.size()];
         makeMove(move);
         if (print) {

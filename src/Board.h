@@ -32,8 +32,21 @@ public:
      * @brief Default constructor for Board (empty board)
      */
     Board();
+    /**
+    * @brief Destructor for Board
+    */
     ~Board();
+    /**
+    * @brief Copy constructor for Board
+    *
+    * @param board The board to copy
+    */
     Board(const Board & board);
+    /**
+    * @brief Assignment operator overload for Board
+    *
+    * @brief other The board to copy
+    */
     Board & operator=(const Board & other);
     /**
      * @brief Sets up the board to the standard starting position

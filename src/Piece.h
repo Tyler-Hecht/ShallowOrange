@@ -10,6 +10,9 @@ class Piece {
     char symbol; // The symbol of the piece, 'P' for pawn
     bool color; //0 for black, 1 for white
 public:
+    /**
+    * @brief Default constructor for Piece (idk why you would use this)
+    */
     Piece() : symbol('\0'), color(false) {}
     /**
      * @brief Piece constructor
