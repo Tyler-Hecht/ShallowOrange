@@ -15,7 +15,7 @@
  * - What en passant is possible
  */
 class Board {
-    Piece * squares[8][8];
+    Piece squares[8][8];
     std::string enPassant;
     bool turn; // 1 for white, 0 for black
     bool canCastleKingsideWhite;
@@ -33,22 +33,6 @@ public:
      * @brief Default constructor for Board (empty board)
      */
     Board();
-    /**
-    * @brief Destructor for Board
-    */
-    ~Board();
-    /**
-    * @brief Copy constructor for Board
-    *
-    * @param board The board to copy
-    */
-    Board(const Board & other);
-    /**
-    * @brief Assignment operator overload for Board
-    *
-    * @brief other The board to copy
-    */
-    Board & operator=(const Board & other);
     /**
      * @brief Sets up the board to the standard starting position
      */
@@ -68,24 +52,24 @@ public:
      */
     void makeMove(Move & move, bool update = false);
     /**
-     * @brief Get the Square object at a given square
+     * @brief Get the Piece at a given square
      * 
      * @param square A string for the square, such as "e4"
      * @return Square* A pointer to the Square object
      */
-    Piece * getPiece(std::string square) const {
+    Piece getPiece(std::string square) const {
         int x = square[0] - 'a';
         int y = square[1] - '1';
         return squares[x][y];
     }
 
     /**
-     * @brief Sets the Piece object at a given square
+     * @brief Sets the Piece at a given square
      * 
      * @param square The square to set the piece at
      * @param piece The piece to set
      */
-    void setPiece(std::string square, Piece * piece) {
+    void setPiece(std::string square, Piece piece) {
         int x = square[0] - 'a';
         int y = square[1] - '1';
         squares[x][y] = piece;

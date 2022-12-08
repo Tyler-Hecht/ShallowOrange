@@ -11,7 +11,7 @@ class Piece {
     bool color; //0 for black, 1 for white
 public:
     /**
-    * @brief Default constructor for Piece (idk why you would use this)
+    * @brief Default constructor for Piece
     */
     Piece() : symbol('\0'), color(false) {}
     /**
@@ -68,6 +68,13 @@ public:
      * @return std::vector<std::vector<double>> The table
      */
     std::vector<std::vector<double>> getPieceTable(int phase) const;
+
+    bool operator==(const Piece piece) const {
+        return symbol == piece.symbol && color == piece.color;
+    }
+    bool operator!=(const Piece piece) const {
+        return !(*this == piece);
+    }
 };
 
 /**
