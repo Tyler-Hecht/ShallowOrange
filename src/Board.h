@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include "Piece.h"
 #include "Move.h"
 #include "Eval.h"
@@ -25,7 +25,7 @@ class Board {
     std::string whiteKingSquare, blackKingSquare;
     int halfmoveClock;
     int fullmoveNumber;
-    std::map<std::string, int> FENcounter;
+    std::unordered_map<std::string, int> FENcounter;
     int result; // see updateResult() for details
     int phase; // 0 for opening, 1 for middle game, 2 for endgame
 public:
@@ -33,10 +33,12 @@ public:
      * @brief Default constructor for Board (empty board)
      */
     Board();
+
     /**
      * @brief Sets up the board to the standard starting position
      */
     void setup();
+
     /**
      * @brief Prints the board onscreen
      * 
@@ -44,36 +46,22 @@ public:
      * @param pov The point of view to print the board from (true for white, false for black)
      */
     void print(bool withCoords = false, bool pov = true) const;
+
     /**
      * @brief Makes a move on the board, updating relevant member variables
      * 
      * @param move The move to make
      * @param update Whether to update the result of the game
      */
-    void makeMove(Move & move, bool update = false);
-    /**
-     * @brief Get the Piece at a given square
-     * 
-     * @param square A string for the square, such as "e4"
-     * @return Square* A pointer to the Square object
-     */
-    Piece getPiece(std::string square) const {
-        int x = square[0] - 'a';
-        int y = square[1] - '1';
-        return squares[x][y];
-    }
+    void makeMove(const Move & move, bool update = false);
 
     /**
-     * @brief Sets the Piece at a given square
+     * @brief Gets all possible legal moves in the current position
+     * Disambiguation is handled
      * 
-     * @param square The square to set the piece at
-     * @param piece The piece to set
+     * @return std::vector<Move> All the possible moves
      */
-    void setPiece(std::string square, Piece piece) {
-        int x = square[0] - 'a';
-        int y = square[1] - '1';
-        squares[x][y] = piece;
-    }
+    std::vector<Move> getAllMoves() const;
 
     /**
      * @brief Gets the current turn
@@ -99,7 +87,78 @@ public:
     int getFullmoveNumber() const {
         return fullmoveNumber;
     }
+        /**
+     * @brief Gets the result of the position
+     * 
+     * @return int The result of the position
+     */
+    int getResult() const {
+        return result;
+    }
+    /**
+     * @brief Gets the phase of the game
+     * 
+     * @return int The phase of the game
+     */
+    int getPhase() const {
+        return phase;
+    }
 
+    /**
+     * @brief Reads in a move from a string (algabraic notation)
+     * Since en passant is always a brilliant move, it must end with "!!"
+     * 
+     * @param str The string to read the move from (algebraic notation)
+     * @param Move The move to read the string into
+     * @return bool Whether the move exists in the current position
+     */
+    bool readMove(std::string str, Move & move) const;
+
+    /**
+     * @brief Reads in a position from an Forsyth-Edwards Notation (FEN) string
+     * 
+     * @param fen The FEN
+     */
+    void readFEN(std::string fen);
+    /**
+     * @brief Gets the Forsyth-Edwards Notation (FEN) of the current position
+     * 
+     * @param full Whether to include the halfmove clock and fullmove number
+     * @return std::string The FEN
+     */
+    std::string writeFEN(bool full = true) const;
+
+    /**
+     * @brief Evaluates the position (no depth)
+     * Defined in Evaluate.cpp
+     * 
+     * @return Eval The evaluation of the position
+     */
+    Eval evaluate() const;
+
+private:
+    /**
+     * @brief Get the Piece at a given square
+     * 
+     * @param square A string for the square, such as "e4"
+     * @return Square* A pointer to the Square object
+     */
+    Piece getPiece(std::string square) const {
+        int x = square[0] - 'a';
+        int y = square[1] - '1';
+        return squares[x][y];
+    }
+    /**
+     * @brief Sets the Piece at a given square
+     * 
+     * @param square The square to set the piece at
+     * @param piece The piece to set
+     */
+    void setPiece(std::string square, Piece piece) {
+        int x = square[0] - 'a';
+        int y = square[1] - '1';
+        squares[x][y] = piece;
+    }
     /**
      * @brief Finds all the squares that a knight can move to from a given square
      * 
@@ -140,7 +199,7 @@ public:
      * @return bool Whether the king is in checkmate
      */
     bool inCheckmate(bool color) const {
-        return inCheck(color, findKing(color)) && getAllMoves().empty();
+        return inCheck(color, findKing(color)) && noMoves();
     }
     /**
      * @brief Determines if a given move is legal
@@ -150,7 +209,7 @@ public:
      * @param move The move to check
      * @return bool Whether or not the move is legal
      */
-    bool isLegal(Move & move) const;
+    bool isLegal(const Move & move) const;
 
     /**
      * @brief Gets all the possible pawn moves for a given square
@@ -186,43 +245,12 @@ public:
     std::vector<Move> getMoves(std::string square) const;
 
     /**
-     * @brief Gets all possible legal moves in the current position
-     * Disambiguation is handled
-     * 
-     * @return std::vector<Move> All the possible moves
-     */
-    std::vector<Move> getAllMoves() const;
-
-    /**
      * @brief Determines if there are no legal moves for a the current turn
      * This is faster than getAllMoves().empty() because it return false once it finds a legal move
      * 
      * @return bool Whether or not there are no legal moves
      */
     bool noMoves() const;
-
-    /**
-     * @brief Reads in a move from a string (algabraic notation)
-     * Since en passant is always a brilliant move, it must end with "!!"
-     * 
-     * @param str The string to read the move from (algebraic notation)
-     * @param Move The move to read the string into
-     * @return bool Whether the move exists in the current position
-     */
-    bool readMove(std::string str, Move & move) const;
-    /**
-     * @brief Reads in a position from an Forsyth-Edwards Notation (FEN) string
-     * 
-     * @param fen The FEN
-     */
-    void readFEN(std::string fen);
-    /**
-     * @brief Gets the Forsyth-Edwards Notation (FEN) of the current position
-     * 
-     * @param full Whether to include the halfmove clock and fullmove number
-     * @return std::string The FEN
-     */
-    std::string writeFEN(bool full = true) const;
 
     /**
      * @brief Determines if there is insufficient material for checkmate
@@ -232,18 +260,13 @@ public:
     bool insufficientMaterial() const;
 
     /**
-     * @brief Determines if a position has been repeated a certain number of times or more
+     * @brief Determines if this position has been repeated a certain number of times or more
      * 
      * @param amount The number of times the position was repeated
      * @return bool Whether the position has been repeated the given number of times
      */
     bool repetition(int amount) const {
-        for (auto it = FENcounter.begin(); it != FENcounter.end(); it++) {
-            if (it->second >= amount) {
-                return true;
-            }
-        }
-        return false;
+        return FENcounter.at(writeFEN(false)) >= amount;
     }
     /**
      * @brief Updates the result of the position
@@ -256,36 +279,11 @@ public:
     int updateResult();
 
     /**
-     * @brief Gets the result of the position
-     * 
-     * @return int The result of the position
-     */
-    int getResult() const {
-        return result;
-    }
-
-    /**
      * @brief Updates the phase of the game
      * 
      * @return int The phase of the game
      */
     int updatePhase();
-    
-    /**
-     * @brief Gets the phase of the game
-     * 
-     * @return int The phase of the game
-     */
-    int getPhase() const {
-        return phase;
-    }
-
-    /**
-     * @brief Evaluates the position (no depth)
-     * 
-     * @return Eval The evaluation of the position
-     */
-    Eval evaluate() const;
 };
 
 /**

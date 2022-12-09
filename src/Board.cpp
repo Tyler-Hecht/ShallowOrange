@@ -82,7 +82,7 @@ void Board::print(bool withCoords, bool pov) const {
     }
 }
 
-void Board::makeMove(Move & move, bool update) {
+void Board::makeMove(const Move & move, bool update) {
     // the piece that is moving
     Piece piece = getPiece(move.getFrom());
     // update king square
@@ -300,7 +300,7 @@ bool Board::inCheck(bool color, std::string kingSquare) const {
     return false;
 }
 
-bool Board::isLegal(Move & move) const {
+bool Board::isLegal(const Move & move) const {
     // not legal if trying to castle in or through check
     if (move.isCastle()) {
         // white
@@ -506,13 +506,13 @@ vector<Move> Board::getMoves(string square) const {
             legalMoves.push_back(move);
         }
     }
-    // add check to moves
+    // add check/mate to moves
     for (size_t i = 0; i < legalMoves.size(); i++) {
         Board tmp = Board(*this);
         tmp.makeMove(legalMoves[i]);
         if (tmp.inCheck(tmp.turn, tmp.findKing(tmp.turn))) {
             legalMoves[i].setCheck(true);
-            legalMoves[i].setCheckmate(tmp.inCheckmate(!turn));
+            legalMoves[i].setCheckmate(tmp.noMoves());
         }
     }
     return legalMoves;
@@ -567,14 +567,14 @@ vector<Move> Board::getAllMoves() const {
 
     }
     
-    // handle en passant
+    // force en passant
     vector<Move> trueMoves;
     for (Move move : moves) {
         if (move.isEnPassant()) {
             trueMoves.push_back(move);
         }
     }
-    if (trueMoves.size() > 0) {
+    if (!trueMoves.empty()) {
         return trueMoves;
     }
     return moves;
@@ -797,10 +797,10 @@ bool Board::insufficientMaterial() const {
 
 int Board::updateResult() {
     if (noMoves()) {
-        if (inCheckmate(true)) {
+        if (inCheck(true, findKing(true))) {
             result = 2;
             return 2;
-        } else if (inCheckmate(false)) {
+        } else if (inCheck(false, findKing(false))) {
             result = 1;
             return 1;
         } else {

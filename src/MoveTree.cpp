@@ -18,6 +18,7 @@ void MoveTree::MoveNode::calculateLines(double randomness) {
 }
 
 void MoveTree::deleteTree(MoveNode * subroot) {
+    if (subroot == NULL) { return; }
     for (size_t i = 0; i < subroot->lines.size(); i++) {
         deleteTree(subroot->lines[i]);
     }

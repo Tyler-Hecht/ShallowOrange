@@ -16,3 +16,5 @@ To be implemented:\
 -Opening book\
 -More sophisticated board evaluation\
 -Optimized calculations
+
+Note: En passant is forced

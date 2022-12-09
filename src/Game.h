@@ -1,7 +1,6 @@
 #pragma once
 #include "Board.h"
 #include "MoveTree.h"
-#include <map>
 #include <vector>
 #include <string>
 
@@ -61,12 +60,12 @@ public:
      * @return Move The best move
      */
     Move getBestMove(int depth);
+    
     /**
      * @brief Plays random moves until the game is over
      * 
      * @param print Whether to print the board and move after each move
      */
-    
     void generateRandomGame(bool print = false);
 
     /**
