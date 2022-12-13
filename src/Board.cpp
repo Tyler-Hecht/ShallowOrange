@@ -227,7 +227,7 @@ vector<string> Board::rbSquares(string square, bool rook) const {
             }
             squares.push_back(string(1, 'a' + file) + string(1, '1' + rank));
             // ran into piece
-            if (getPiece(squares.back()) != Piece()) {
+            if (!squareEmpty(squares.back())) {
                 break;
             }
         }
@@ -367,7 +367,7 @@ vector<Move> Board::getPawnMoves(string square) const {
         }
     }
     // capture left
-    if (file > 0 && getPiece(asString(file-1,rank+colorMultiplier)) != Piece() && getPiece(asString(file-1,rank+colorMultiplier)).getColor() != color) {
+    if (file > 0 && !squareEmpty(asString(file-1,rank+colorMultiplier)) && getPiece(asString(file-1,rank+colorMultiplier)).getColor() != color) {
         // promotion
         if ((color && rank == 6) || (!color && rank == 1)) {
             moves.push_back(Move('P', square, asString(file - 1, rank + colorMultiplier), true, true, 'Q'));
@@ -379,7 +379,7 @@ vector<Move> Board::getPawnMoves(string square) const {
         }
     }
     // capture right
-    if (file < 7 && getPiece(asString(file+1,rank+colorMultiplier)) != Piece() && getPiece(asString(file+1, rank+colorMultiplier)).getColor() != color) {
+    if (file < 7 && !squareEmpty(asString(file+1,rank+colorMultiplier)) && getPiece(asString(file+1, rank+colorMultiplier)).getColor() != color) {
         // promotion
         if ((color && rank == 6) || (!color && rank == 1)) {
             moves.push_back(Move('P', square, asString(file + 1, rank + colorMultiplier), true, true, 'Q'));
@@ -585,7 +585,7 @@ vector<Move> Board::getAllMoves(bool check4checks) const {
 bool Board::noMoves() const {
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
-            if (getPiece(asString(i, j)) != Piece() && getPiece(asString(i, j)).getColor() == turn) {
+            if (!squareEmpty(asString(i, j)) && getPiece(asString(i, j)).getColor() == turn) {
                 if (getMoves(asString(i, j), false).size() > 0) {
                     return false;
                 }
@@ -748,7 +748,7 @@ bool Board::insufficientMaterial() const {
     bool blackBishopOnDark = false;
     for (int file = 0; file < 8; file++) {
         for (int rank = 0; rank < 8; rank++) {
-            if (squares[file][rank] != Piece()) {
+            if (!squareEmpty(asString(file, rank))) {
                 if (squares[file][rank].getSymbol() == 'P') {
                     return false;
                 } else if (squares[file][rank].getSymbol() == 'R') {

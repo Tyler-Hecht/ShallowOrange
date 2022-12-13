@@ -68,7 +68,6 @@ Move Game::getBestMove() {
         if (board.getTurn()) {
             if (eval > bestEval) {
                 bestEval = eval;
-                cout << bestEval << endl;
                 bestMove = move;
             }
         } else {
