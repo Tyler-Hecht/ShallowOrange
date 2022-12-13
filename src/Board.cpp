@@ -469,7 +469,7 @@ vector<Move> Board::getKingMoves(string square) const {
     return moves;
 }
 
-vector<Move> Board::getMoves(string square) const {
+vector<Move> Board::getMoves(string square, bool check4checks) const {
     // no piece on square
     if (getPiece(square)== Piece()) {
         return vector<Move>();
@@ -518,11 +518,14 @@ vector<Move> Board::getMoves(string square) const {
     return legalMoves;
 }
 
-vector<Move> Board::getAllMoves() const {
+vector<Move> Board::getAllMoves(bool check4checks) const {
+    if (result != 0) {
+        return vector<Move>();
+    }
     vector<Move> moves;
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
-            vector<Move> tmp = getMoves(asString(i, j));
+            vector<Move> tmp = getMoves(asString(i, j), check4checks);
             if (!tmp.empty()) {
                 moves.insert(moves.end(), tmp.begin(), tmp.end());
             }
@@ -584,7 +587,7 @@ bool Board::noMoves() const {
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
             if (getPiece(asString(i, j)) != Piece() && getPiece(asString(i, j)).getColor() == turn) {
-                if (getMoves(asString(i, j)).size() > 0) {
+                if (getMoves(asString(i, j), false).size() > 0) {
                     return false;
                 }
             }
@@ -837,7 +840,16 @@ int Board::updatePhase() {
             return 2;
         }
     } else {
-        phase = 0;
-        return 0;
+        if (fullmoveNumber > 40) {
+            phase = 2;
+            return 2;
+        } else if (fullmoveNumber > 15) {
+            phase = 1;
+            return 1;
+        } else {
+            phase = 0;
+            return 0;
+        }
+
     }
 }

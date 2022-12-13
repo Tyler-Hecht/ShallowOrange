@@ -59,9 +59,10 @@ public:
      * @brief Gets all possible legal moves in the current position
      * Disambiguation is handled
      * 
+     * @param check4checks Whether to check if each move is check or mate
      * @return std::vector<Move> All the possible moves
      */
-    std::vector<Move> getAllMoves() const;
+    std::vector<Move> getAllMoves(bool check4checks = true) const;
 
     /**
      * @brief Gets the current turn
@@ -240,9 +241,10 @@ private:
      * Disambiguation is not handled
      * 
      * @param square The square to get the moves for
+     * @param check4checks Whether to check if each move is check or mate
      * @return std::vector<Move> All the possible moves for the square
      */
-    std::vector<Move> getMoves(std::string square) const;
+    std::vector<Move> getMoves(std::string square, bool check4checks) const;
 
     /**
      * @brief Determines if there are no legal moves for a the current turn

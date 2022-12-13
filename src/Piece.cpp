@@ -30,21 +30,21 @@ int Piece::pointValue() const {
 }
 
 double Piece::locationAdjustment(string square, int phase) const {
-    vector<vector<double>> pieceTable = getPieceTable(phase);
     int row = square[1] - '1';
     int col = square[0] - 'a';
     if (color) {
-        return pieceTable[7-row][col];
+        return getPieceTable(phase, 7 - row, col);
     } else {
-        return pieceTable[row][col];
+        return getPieceTable(phase, row, col);
     }
 }
 
-vector<vector<double>> Piece::getPieceTable(int phase) const {
+double Piece::getPieceTable(int phase, int row, int col) const {
+    vector<vector<double>> table;
     switch (symbol) {
         case 'P':
             if (phase == 0) {
-                return {
+                table = {
                     {0, 0, 0, 0, 0, 0, 0, 0},
                     {0, 0, 0, 0, 0, 0, 0, 0},
                     {0, 0, 0, 0, 0, 0, 0, 0},
@@ -55,7 +55,7 @@ vector<vector<double>> Piece::getPieceTable(int phase) const {
                     {0, 0, 0, 0, 0, 0, 0, 0}
                 };
             } else if (phase == 1) {
-                return {
+                table = {
                     {0, 0, 0, 0, 0, 0, 0, 0},
                     {0, 0, 0, 0, 0, 0, 0, 0},
                     {0, 0, 0, 0, 0, 0, 0, 0.1},
@@ -66,7 +66,7 @@ vector<vector<double>> Piece::getPieceTable(int phase) const {
                     {0, 0, 0, 0, 0, 0, 0, 0}
                 };
             } else {
-                return {
+                table = {
                     {0, 0, 0, 0, 0, 0, 0, 0},
                     {0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8},
                     {0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5},
@@ -80,7 +80,7 @@ vector<vector<double>> Piece::getPieceTable(int phase) const {
             break;
         case 'N':
             if (phase == 0) {
-                return {
+                table = {
                         {0, 0, 0, 0, 0, 0, 0, 0},
                         {0, 0, 0, 0, 0, 0, 0, 0},
                         {0, 0, 0, 0, 0, 0, 0, 0},
@@ -91,7 +91,7 @@ vector<vector<double>> Piece::getPieceTable(int phase) const {
                         {-1, -0.3, 0, 0, 0, 0, -0.3, -1}
                     };
             } else if (phase == 1) {
-                return {
+                table = {
                     {0, 0, 0, 0, 0, 0, 0, 0},
                     {0, 0, 0, 0, 0, 0, 0, 0},
                     {0, 0.2, 0.2, 0.3, 0.3, 0.2, 0,2, 0},
@@ -102,7 +102,7 @@ vector<vector<double>> Piece::getPieceTable(int phase) const {
                     {-1, -0.5, -0.1, -0.1, -0.1, -0.1, -0.5, -1}
                 };
             } else {
-                return {
+                table = {
                     {-0.5, 0, 0, 0, 0, 0, 0, -0.5},
                     {0, 0, 0, 0.1, 0.1, 0, 0, 0},
                     {0, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0},
@@ -116,7 +116,7 @@ vector<vector<double>> Piece::getPieceTable(int phase) const {
             break;
         case 'B':
             if (phase == 0) {
-                return {
+                table = {
                     {0, 0, 0, 0, 0, 0, 0, 0},
                     {0, 0, 0, 0, 0, 0, 0, 0},
                     {0, 0, 0, 0, 0, 0, 0, 0},
@@ -127,7 +127,7 @@ vector<vector<double>> Piece::getPieceTable(int phase) const {
                     {-1, -0.5, -0.3, 0, 0, -0.3, -0.5, -1}
                 };
             } else if (phase == 1) {
-                return {
+                table = {
                     {0, 0, 0, 0, 0, 0, 0, 0},
                     {0, 0, 0, 0, 0, 0, 0, 0},
                     {0, 0, 0, 0, 0, 0, 0, 0},
@@ -138,7 +138,7 @@ vector<vector<double>> Piece::getPieceTable(int phase) const {
                     {-1, -0.4, -0.3, 0, 0, -0.3, -0.4, -1}
                 };
             } else {
-                return {
+                table = {
                     {-0.5, 0, 0, 0, 0, 0, 0, -0.5},
                     {0, 0, 0, 0, 0, 0, 0, 0},
                     {0, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0},
@@ -152,7 +152,7 @@ vector<vector<double>> Piece::getPieceTable(int phase) const {
             break;
         case 'R':
             if (phase == 0) {
-                return {
+                table = {
                     {0, 0, 0, 0, 0, 0, 0, 0},
                     {0, 0, 0, 0, 0, 0, 0, 0},
                     {0, 0, 0, 0, 0, 0, 0, 0},
@@ -163,7 +163,7 @@ vector<vector<double>> Piece::getPieceTable(int phase) const {
                     {-0.1, -0.2, 0.3, 0.3, 0.3, 0.2, -0.2, -0.1}
                 };
             } else if (phase == 1) {
-                return {
+                table = {
                     {0, 0, 0, 0, 0, 0, 0, 0},
                     {0.05, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.05},
                     {0, 0, 0, 0, 0, 0, 0, 0},
@@ -174,7 +174,7 @@ vector<vector<double>> Piece::getPieceTable(int phase) const {
                     {0, -0.2, 0.2, 0.2, 0.2, 0, -0.1, -0.1}
                 };
             } else {
-                return {
+                table = {
                     {0, 0, 0, 0, 0, 0, 0, 0},
                     {0.15, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.15},
                     {0, 0, 0, 0, 0, 0, 0, 0},
@@ -188,7 +188,7 @@ vector<vector<double>> Piece::getPieceTable(int phase) const {
             break;
         case 'Q':
             if (phase == 0) {
-                return {
+                table = {
                     {0, 0, 0, 0, 0, 0, 0, 0},
                     {0, 0, 0, 0, 0, 0, 0, 0},
                     {0, 0, 0, 0, 0, 0, 0, 0},
@@ -199,7 +199,7 @@ vector<vector<double>> Piece::getPieceTable(int phase) const {
                     {-0.3, -0.1, 0.05, 0.1, 0.05, 0, -0.4, -0.4}
                 };
             } else if (phase == 1) {
-                return {
+                table = {
                     {0, 0, 0, 0, 0, 0, 0, 0},
                     {0, 0, 0, 0, 0, 0, 0, 0},
                     {0, 0, 0, 0, 0, 0, 0, 0},
@@ -210,7 +210,7 @@ vector<vector<double>> Piece::getPieceTable(int phase) const {
                     {-0.3, -0.1, 0.05, 0.1, 0.05, 0, -0.4, -0.4}
                 };
             } else {
-                return {
+                table = {
                     {-0.05, 0, 0, 0, 0, 0, 0, -0.05},
                     {0, 0.05, 0, 0, 0, 0, 0.05, 0},
                     {0, 0, 0.1, 0.1, 0.1, 0.1, 0, 0},
@@ -224,7 +224,7 @@ vector<vector<double>> Piece::getPieceTable(int phase) const {
             break;
         case 'K':
             if (phase == 0) {
-                return {
+                table = {
                     {0, 0, 0, 0, 0, 0, 0, 0},
                     {0, 0, 0, 0, 0, 0, 0, 0},
                     {0, 0, 0, 0, 0, 0, 0, 0},
@@ -235,7 +235,7 @@ vector<vector<double>> Piece::getPieceTable(int phase) const {
                     {0.1, 0.3, 0.2, -0.3, -0.1, 0.1, 0.4, 0.2}
                 };
             } else if (phase == 1) {
-                return {
+                table = {
                     {0, 0, 0, 0, 0, 0, 0, 0},
                     {0, 0, 0, 0, 0, 0, 0, 0},
                     {0, 0, 0, 0, 0, 0, 0, 0},
@@ -246,7 +246,7 @@ vector<vector<double>> Piece::getPieceTable(int phase) const {
                     {0.1, 0.2, 0.2, -0.2, -0.1, 0.1, 0.2, 0.2}
                 };
             } else {
-                return {
+                table = {
                     {-0.4, -0.3, -0.2, -0.2, -0.2, -0.2, -0.3, -0.2},
                     {-0.3, 0, 0, 0, 0, 0, 0, -0.3},
                     {-0.3, 0, 0.1, 0.1, 0.1, 0.1, 0, -0.3},
@@ -259,5 +259,5 @@ vector<vector<double>> Piece::getPieceTable(int phase) const {
             }
             break;
     }
-    return vector<vector<double>>();
+    return table[row][col];
 }

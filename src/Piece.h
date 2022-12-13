@@ -67,7 +67,7 @@ public:
      * @param phase The phase of the game (0 for opening, 1 for middle game, 2 for endgame)
      * @return std::vector<std::vector<double>> The table
      */
-    std::vector<std::vector<double>> getPieceTable(int phase) const;
+    double getPieceTable(int phase, int row, int col) const;
 
     bool operator==(const Piece piece) const {
         return symbol == piece.symbol && color == piece.color;

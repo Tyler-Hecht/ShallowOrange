@@ -14,13 +14,18 @@ private:
      * @brief A struct representing a node (position) in the tree
      */
     struct MoveNode {
-        Move move; // The move that got to this position
-        Board board; // The board
-        std::vector<MoveNode*> lines; // The possible lines from this position
-        Eval eval; // The board's evaluation
-        MoveNode(Move move, Board board) {
-            this->move = move;
-            this->board = board;
+        Move move_; // The move that got to this position
+        Board board_; // The board
+        std::vector<MoveNode*> lines_; // The possible lines from this position
+        Eval eval_; // The board's evaluation
+        bool isRoot_; // Whether this node is the root
+        /**
+        * @brief MoveNode constructor
+        *
+        * @param move The move that got to this position
+        * @param board The board for this node
+        */
+        MoveNode(Move move, Board board) : move_(move), board_(board), isRoot_(false) {
         }
         /**
          * @brief Generates the lines from the node's position (also calculates evals)
@@ -29,9 +34,9 @@ private:
          */
         void calculateLines(double randomness);
     };
-    MoveNode * root; // The root of the tree
-    int depth; // The maximum depth of the tree
-    double randomness; // The amount of randomness to add to the evals (see Game class)
+    MoveNode * root_; // The root of the tree
+    int depth_; // The maximum depth of the tree
+    double randomness_; // The amount of randomness to add to the evals (see Game class)
 
     /**
      * @brief Deletes a tree of moves
@@ -59,9 +64,9 @@ private:
     std::pair<Eval, Move> getBestEval(MoveNode * subroot, int currDepth, Eval alpha, Eval beta) const;
 public:
     /**
-     * @brief Default constructor for MoveTree (idk why you would use this)
+     * @brief Default constructor for MoveTree
      */
-    MoveTree() : root(nullptr), depth(0), randomness(0) {}
+    MoveTree() : root_(nullptr), depth_(0), randomness_(0) {}
     /**
      * @brief MoveTree constructor
      * 
@@ -70,17 +75,17 @@ public:
      * @param randomness The amount of randomness to add to the evals (see Game class)
      */
     MoveTree(Board board, int depth, double randomness = 0) {
-        srand(time(NULL));
-        root = new MoveNode(Move(), Board(board));
-        root->eval = board.evaluate();
-        this->depth = depth;
-        this->randomness = randomness;
+        root_ = new MoveNode(Move(), Board(board));
+        root_->isRoot_ = true;
+        root_->eval_ = board.evaluate();
+        this->depth_ = depth;
+        this->randomness_ = randomness;
     }
     /**
     * @brief Destructor for MoveTree
     */
     ~MoveTree() {
-        deleteTree(root);
+        deleteTree(root_);
     }
     /**
     * @brief Copy constructor for MoveTree
@@ -88,9 +93,9 @@ public:
     * @param other The MoveTree to copy
     */
     MoveTree(const MoveTree & other) {
-        depth = other.depth;
-        randomness = other.randomness;
-        root = copyTree(other.root);
+        depth_ = other.depth_;
+        randomness_ = other.randomness_;
+        root_ = copyTree(other.root_);
     }
     /**
     * @brief Assignment operator overload for MoveTree
@@ -98,10 +103,10 @@ public:
     * @param other The MoveTree to copy
     */
     MoveTree & operator=(const MoveTree & other) {
-        depth = other.depth;
-        randomness = other.randomness;
-        copyTree(other.root);
-        deleteTree(root);
+        depth_ = other.depth_;
+        randomness_ = other.randomness_;
+        copyTree(other.root_);
+        deleteTree(root_);
         return *this;
     }
     /**

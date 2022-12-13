@@ -1,7 +1,6 @@
 #include "Game.h"
 #include <chrono>
 #include <thread>
-#include <ctime>
 
 using namespace std;
 
