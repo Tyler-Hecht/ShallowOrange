@@ -8,15 +8,20 @@ using namespace std;
 
 TEST_CASE("position") {
     Board board;
-    board.readFEN("2r3k1/2p2p2/p4Qbp/2p3p1/1q4P1/1P3P1P/2P5/R6K w - - 4 33");
-    board.print();
-    MoveTree mt(board, 3);
-    cout << mt.getBestMove() << endl;
+    board.readFEN("1r4nr/ppnk1p2/2p3pb/3ppP1p/3P2b1/4B1PN/PP1QP2P/RN2KBR1 w Q e6 0 20");
+    vector<Move> moves = board.getAllMoves();
+    for (Move move : moves) {
+        cout << move << endl;
+    }
+}
+
+TEST_CASE("random") {
+    Game game;
+    game.generateRandomGame();
+    cout << game.getPGN() << endl;
 }
 
 TEST_CASE("deep") {
-    Board board;
-    board.setup();
     Game game(0);
     game.generateDeepGame(3, true);
     cout << game.getPGN() << endl;

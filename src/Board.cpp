@@ -157,11 +157,6 @@ void Board::makeMove(const Move & move, bool update) {
             canCastleKingsideBlack = false;
         }
     }
-    // handles en passant
-    if (move.isEnPassant()) {
-        string captureSquare = move.enPassantSquare();
-        setPiece(captureSquare, Piece());
-    }
     // determines new en passant square
     if (move.getPiece() == 'P') {
         if (move.getFrom()[1] == '2' && move.getTo()[1] == '4') {
@@ -268,10 +263,12 @@ bool Board::inCheck(bool color, std::string kingSquare) const {
         }
     }
     vector<string> pawnMoves;
-    //work backwards to find possible pawn moves
+    // work backwards to find possible pawn moves
+    // black
     if (!color) {
         pawnMoves.push_back(asString(kingSquare[0] - 'a' - 1, kingSquare[1] - '1' - 1));
         pawnMoves.push_back(asString(kingSquare[0] - 'a' + 1, kingSquare[1] - '1' - 1));
+    // white
     } else {
         pawnMoves.push_back(asString(kingSquare[0] - 'a' - 1, kingSquare[1] - '1' + 1));
         pawnMoves.push_back(asString(kingSquare[0] - 'a' + 1, kingSquare[1] - '1' + 1));
@@ -354,7 +351,7 @@ vector<Move> Board::getPawnMoves(string square) const {
     bool color = getPiece(square).getColor();
     int colorMultiplier = color ? 1 : -1;
     // move forward
-    if (getPiece(asString(file, rank + colorMultiplier)) == Piece()) {
+    if (squareEmpty(asString(file, rank + colorMultiplier))) {
         // promotion
         if ((color && rank == 6 ) || (!color && rank == 1)) {
             moves.push_back(Move('P', square, asString(file, rank + colorMultiplier), false, true, 'Q'));
@@ -365,7 +362,7 @@ vector<Move> Board::getPawnMoves(string square) const {
             moves.push_back(Move('P', square, asString(file, rank + colorMultiplier)));
         }
         // move two squares
-        if (rank == (color ? 1 : 6) && getPiece(asString(file, rank + 2 * colorMultiplier)) == Piece()) {
+        if (rank == (color ? 1 : 6) && squareEmpty(asString(file, rank + 2 * colorMultiplier))) {
             moves.push_back(Move('P', square, asString(file, rank + 2 * colorMultiplier)));
         }
     }
@@ -421,7 +418,7 @@ vector<Move> Board::getNBRQMoves(string square, char symbol) const {
         squares.insert(squares.end(), tmp.begin(), tmp.end());
     }
     for (size_t i = 0; i < squares.size(); i++) {
-        if (getPiece(squares[i]) == Piece()) {
+        if (squareEmpty(squares[i])) {
             moves.push_back(Move(symbol, square, squares[i]));
         } else if (getPiece(squares[i]).getColor() != color) {
             moves.push_back(Move(symbol, square, squares[i], true));
@@ -438,7 +435,7 @@ vector<Move> Board::getKingMoves(string square) const {
         int file = square[0] - 'a' + offsets[i].first;
         int rank = square[1] - '1' + offsets[i].second;
         if (file >= 0 && file <= 7 && rank >= 0 && rank <= 7) {
-            if (getPiece(asString(file, rank)) == Piece()) {
+            if (squareEmpty(asString(file, rank))) {
                 moves.push_back(Move('K', square, asString(file, rank)));
             } else if (getPiece(asString(file, rank)).getColor() != color) {
                 moves.push_back(Move('K', square, asString(file, rank), true));
@@ -447,22 +444,22 @@ vector<Move> Board::getKingMoves(string square) const {
     }
     // castling
     if (color && canCastleKingsideWhite) {
-        if (getPiece("f1") == Piece() && getPiece("g1") == Piece()) {
+        if (squareEmpty("f1") && squareEmpty("g1")) {
             moves.push_back(Move('K', square, "g1", false, false, ' ', true));
         }
     }
     if (color && canCastleQueensideWhite) {
-        if (getPiece("d1") == Piece() && getPiece("c1") == Piece() && getPiece("b1") == Piece()) {
+        if (squareEmpty("d1") && squareEmpty("c1") && squareEmpty("b1")) {
             moves.push_back(Move('K', square, "c1", false, false, ' ', true));
         }
     }
     if (!color && canCastleKingsideBlack) {
-        if (getPiece("f8") == Piece() && getPiece("g8") == Piece()) {
+        if (squareEmpty("f8") && squareEmpty("g8")) {
             moves.push_back(Move('K', square, "g8", false, false, ' ', true));
         }
     }
     if (!color && canCastleQueensideBlack) {
-        if (getPiece("d8") == Piece() && getPiece("c8") == Piece() && getPiece("b8") == Piece()) {
+        if (squareEmpty("d8") && squareEmpty("c8") && squareEmpty("b8")) {
             moves.push_back(Move('K', square, "c8", false, false, ' ', true));
         }
     }
@@ -471,7 +468,7 @@ vector<Move> Board::getKingMoves(string square) const {
 
 vector<Move> Board::getMoves(string square, bool check4checks) const {
     // no piece on square
-    if (getPiece(square)== Piece()) {
+    if (squareEmpty(square)) {
         return vector<Move>();
     }
     // piece is not the right color
@@ -507,12 +504,14 @@ vector<Move> Board::getMoves(string square, bool check4checks) const {
         }
     }
     // add check/mate to moves
-    for (size_t i = 0; i < legalMoves.size(); i++) {
-        Board tmp = Board(*this);
-        tmp.makeMove(legalMoves[i]);
-        if (tmp.inCheck(tmp.turn, tmp.findKing(tmp.turn))) {
-            legalMoves[i].setCheck(true);
-            legalMoves[i].setCheckmate(tmp.noMoves());
+    if (check4checks) {
+        for (size_t i = 0; i < legalMoves.size(); i++) {
+            Board tmp = Board(*this);
+            tmp.makeMove(legalMoves[i]);
+            if (tmp.inCheck(tmp.turn, tmp.findKing(tmp.turn))) {
+                legalMoves[i].setCheck(true);
+                legalMoves[i].setCheckmate(tmp.noMoves());
+            }
         }
     }
     return legalMoves;
@@ -687,7 +686,7 @@ string Board::writeFEN(bool full) const {
     for (int rank = 7; rank >= 0; rank--) {
         int empty = 0;
         for (int file = 0; file < 8; file++) {
-            if (squares[file][rank] == Piece()) {
+            if (squareEmpty(asString(file, rank))) {
                 empty++;
             } else {
                 if (empty > 0) {

@@ -142,7 +142,7 @@ private:
      * @brief Get the Piece at a given square
      * 
      * @param square A string for the square, such as "e4"
-     * @return Square* A pointer to the Square object
+     * @return Piece the Piece on the square
      */
     Piece getPiece(std::string square) const {
         int x = square[0] - 'a';
@@ -150,9 +150,19 @@ private:
         return squares[x][y];
     }
     /**
+    * @brief Determines if a square has no piece on it
+    *
+    * @param square The string for the square (see above)
+    * @return bool Whether the square is empty
+    */
+    bool squareEmpty(std::string square) const {
+        Piece piece = getPiece(square);
+        return piece.getSymbol() == '\0';
+    }
+    /**
      * @brief Sets the Piece at a given square
      * 
-     * @param square The square to set the piece at
+     * @param square The square to set the piece at (see above)
      * @param piece The piece to set
      */
     void setPiece(std::string square, Piece piece) {
